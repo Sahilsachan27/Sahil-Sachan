@@ -1,9 +1,11 @@
 {% comment %} Custom Banner Section {% endcomment %}
 
 <section class="custom-banner">
+  {% if section.settings.bg_image %}
   <div class="banner-illustration">
     <img src="{{ section.settings.bg_image | img_url: 'master' }}" alt="banner background">
   </div>
+  {% endif %}
   
   <div class="banner-content">
     <p class="banner-logo">{{ section.settings.logo_text }}</p>
