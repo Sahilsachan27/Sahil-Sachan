@@ -1,0 +1,461 @@
+{% comment %} Custom Product Grid Section {% endcomment %}
+
+<section class="custom-grid">
+  <h2 class="grid-title">{{ section.settings.grid_title }}</h2>
+
+  <div class="grid-container">
+    {% for block in section.blocks %}
+      {% assign product = all_products[block.settings.product] %}
+      <div class="grid-item" {{ block.shopify_attributes }}>
+        <img src="{{ product.featured_image | img_url: 'master' }}" alt="{{ product.title }}">
+        <button 
+          class="grid-dot-btn"
+          data-product-id="{{ product.id }}"
+          data-product-title="{{ product.title }}"
+          data-product-price="{{ product.price | money }}"
+          data-product-description="{{ product.description | strip_html }}"
+          data-product-image="{{ product.featured_image | img_url: 'master' }}"
+          data-product-variants="{{ product.variants | json | escape }}"
+          data-product-options="{{ product.options_with_values | json | escape }}"
+          onclick="openPopup(this)"
+        >●</button>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+{% comment %} Popup {% endcomment %}
+<div class="popup-overlay" id="popupOverlay" onclick="closePopup()"></div>
+
+<div class="popup-box" id="popupBox">
+  <button class="popup-close" onclick="closePopup()">✕</button>
+  <div class="popup-inner">
+    <img id="popupImage" src="" alt="">
+    <div class="popup-details">
+      <h3 id="popupTitle"></h3>
+      <p id="popupPrice"></p>
+      <p id="popupDescription"></p>
+
+      <div id="popupOptions"></div>
+
+      <button class="add-to-cart-btn" onclick="addToCart()">
+        ADD TO CART →
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Grid Section */
+  .custom-grid {
+    padding: 60px 40px;
+    background: #fff;
+  }
+
+  .grid-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: #000;
+  }
+
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .grid-item {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .grid-item img {
+    width: 100%;
+    height: 350px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+
+  .grid-item:hover img {
+    transform: scale(1.03);
+  }
+
+  .grid-dot-btn {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #000;
+    cursor: pointer;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 2;
+  }
+
+  .grid-dot-btn:hover {
+    background: #000;
+    color: #fff;
+  }
+
+  /* Popup Overlay */
+  .popup-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 100;
+  }
+
+  /* Popup Box */
+  .popup-box {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    width: 500px;
+    max-width: 95vw;
+    z-index: 101;
+    padding: 24px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  }
+
+  .popup-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+  }
+
+  .popup-inner {
+    display: flex;
+    gap: 20px;
+  }
+
+  .popup-inner img {
+    width: 140px;
+    height: 160px;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .popup-details h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .popup-details #popupPrice {
+    font-size: 15px;
+    margin-bottom: 8px;
+    color: #333;
+  }
+
+  .popup-details #popupDescription {
+    font-size: 12px;
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+
+  /* Options */
+  #popupOptions {
+    margin-bottom: 16px;
+  }
+
+  .option-group {
+    margin-bottom: 12px;
+  }
+
+  .option-label {
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  .option-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .option-btn {
+    padding: 6px 14px;
+    border: 1px solid #ccc;
+    background: #fff;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+  }
+
+  .option-btn.active {
+    background: #000;
+    color: #fff;
+    border-color: #000;
+  }
+
+  .size-select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  /* Add to Cart Button */
+  .add-to-cart-btn {
+    width: 100%;
+    padding: 14px;
+    background: #000;
+    color: #fff;
+    border: none;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .add-to-cart-btn:hover {
+    background: #f0c040;
+    color: #000;
+  }
+
+  /* Mobile */
+  @media (max-width: 768px) {
+    .grid-container {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .grid-item img {
+      height: 200px;
+    }
+
+    .popup-inner {
+      flex-direction: column;
+    }
+
+    .popup-inner img {
+      width: 100%;
+      height: 200px;
+    }
+
+    .custom-grid {
+      padding: 30px 16px;
+    }
+  }
+</style>
+
+<script>
+  // Store selected options and current product
+  let selectedOptions = {};
+  let currentVariants = [];
+  let currentProductId = null;
+
+  /**
+   * Open popup with product data
+   */
+  function openPopup(btn) {
+    // Get product data from button attributes
+    const title = btn.dataset.productTitle;
+    const price = btn.dataset.productPrice;
+    const description = btn.dataset.productDescription;
+    const image = btn.dataset.productImage;
+    const variants = JSON.parse(btn.dataset.productVariants);
+    const options = JSON.parse(btn.dataset.productOptions);
+
+    currentProductId = btn.dataset.productId;
+    currentVariants = variants;
+    selectedOptions = {};
+
+    // Set popup content
+    document.getElementById('popupTitle').textContent = title;
+    document.getElementById('popupPrice').textContent = price;
+    document.getElementById('popupDescription').textContent = description;
+    document.getElementById('popupImage').src = image;
+
+    // Build options
+    buildOptions(options);
+
+    // Show popup
+    document.getElementById('popupOverlay').style.display = 'block';
+    document.getElementById('popupBox').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  }
+
+  /**
+   * Build color and size options dynamically
+   */
+  function buildOptions(options) {
+    const container = document.getElementById('popupOptions');
+    container.innerHTML = '';
+
+    options.forEach(option => {
+      const group = document.createElement('div');
+      group.className = 'option-group';
+
+      const label = document.createElement('p');
+      label.className = 'option-label';
+      label.textContent = option.name;
+      group.appendChild(label);
+
+      if (option.name.toLowerCase() === 'size') {
+        // Size dropdown
+        const select = document.createElement('select');
+        select.className = 'size-select';
+
+        const defaultOpt = document.createElement('option');
+        defaultOpt.textContent = 'Choose your size';
+        defaultOpt.value = '';
+        select.appendChild(defaultOpt);
+
+        option.values.forEach(val => {
+          const opt = document.createElement('option');
+          opt.value = val;
+          opt.textContent = val;
+          select.appendChild(opt);
+        });
+
+        select.addEventListener('change', function() {
+          selectedOptions[option.name] = this.value;
+        });
+
+        group.appendChild(select);
+      } else {
+        // Color buttons
+        const btnGroup = document.createElement('div');
+        btnGroup.className = 'option-buttons';
+
+        option.values.forEach((val, i) => {
+          const btn = document.createElement('button');
+          btn.className = 'option-btn' + (i === 0 ? ' active' : '');
+          btn.textContent = val;
+          btn.onclick = function() {
+            btnGroup.querySelectorAll('.option-btn')
+              .forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            selectedOptions[option.name] = val;
+          };
+          if (i === 0) selectedOptions[option.name] = val;
+          btnGroup.appendChild(btn);
+        });
+
+        group.appendChild(btnGroup);
+      }
+
+      container.appendChild(group);
+    });
+  }
+
+  /**
+   * Close popup
+   */
+  function closePopup() {
+    document.getElementById('popupOverlay').style.display = 'none';
+    document.getElementById('popupBox').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  /**
+   * Add to cart with variant matching
+   * Special rule: if Black + Medium selected, also add Soft Winter Jacket
+   */
+  function addToCart() {
+    // Find matching variant
+    const matchedVariant = currentVariants.find(variant => {
+      return Object.keys(selectedOptions).every(optionName => {
+        return variant.title.includes(selectedOptions[optionName]);
+      });
+    });
+
+    if (!matchedVariant) {
+      alert('Please select all options!');
+      return;
+    }
+
+    const items = [{ id: matchedVariant.id, quantity: 1 }];
+
+    // Special rule - Black + Medium = also add Soft Winter Jacket
+    const isBlack = selectedOptions['Color'] === 'Black';
+    const isMedium = selectedOptions['Size'] === 'M' || 
+                     selectedOptions['Size'] === 'Medium';
+
+    if (isBlack && isMedium) {
+      // Find Soft Winter Jacket variant
+      fetch('/products/soft-winter-jacket.js')
+        .then(r => r.json())
+        .then(product => {
+          items.push({ 
+            id: product.variants[0].id, 
+            quantity: 1 
+          });
+          postToCart(items);
+        })
+        .catch(() => postToCart(items));
+    } else {
+      postToCart(items);
+    }
+  }
+
+  /**
+   * Post items to Shopify cart
+   */
+  function postToCart(items) {
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items })
+    })
+    .then(r => r.json())
+    .then(() => {
+      closePopup();
+      window.location.href = '/cart';
+    })
+    .catch(err => {
+      console.error('Cart error:', err);
+      alert('Something went wrong. Please try again.');
+    });
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Custom Product Grid",
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Select Product"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Product Grid"
+    }
+  ]
+}
+{% endschema %}
