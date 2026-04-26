@@ -269,6 +269,7 @@
   let selectedOptions = {};
   let currentVariants = [];
   let currentProductId = null;
+  let currentOptionsConfig = [];
 
   /**
    * Open popup with product data
@@ -279,11 +280,9 @@
     const price = btn.dataset.productPrice;
     const description = btn.dataset.productDescription;
     const image = btn.dataset.productImage;
-    const variants = JSON.parse(btn.dataset.productVariants);
-    const options = JSON.parse(btn.dataset.productOptions);
-
+    currentVariants = JSON.parse(btn.dataset.productVariants);
+    currentOptionsConfig = JSON.parse(btn.dataset.productOptions);
     currentProductId = btn.dataset.productId;
-    currentVariants = variants;
     selectedOptions = {};
 
     // Set popup content
@@ -293,7 +292,7 @@
     document.getElementById('popupImage').src = image;
 
     // Build options
-    buildOptions(options);
+    buildOptions(currentOptionsConfig);
 
     // Show popup
     document.getElementById('popupOverlay').style.display = 'block';
@@ -308,7 +307,7 @@
     const container = document.getElementById('popupOptions');
     container.innerHTML = '';
 
-    options.forEach(option => {
+    options.forEach((option, index) => {
       const group = document.createElement('div');
       group.className = 'option-group';
 
@@ -317,21 +316,19 @@
       label.textContent = option.name;
       group.appendChild(label);
 
-      if (option.name.toLowerCase() === 'size') {
+      const isSize = option.name.toLowerCase().includes('size');
+
+      if (isSize) {
         // Size dropdown
         const select = document.createElement('select');
         select.className = 'size-select';
 
-        const defaultOpt = document.createElement('option');
-        defaultOpt.textContent = 'Choose your size';
-        defaultOpt.value = '';
-        select.appendChild(defaultOpt);
-
-        option.values.forEach(val => {
+        option.values.forEach((val, i) => {
           const opt = document.createElement('option');
           opt.value = val;
           opt.textContent = val;
           select.appendChild(opt);
+          if (i === 0) selectedOptions[option.name] = val; // Default to first
         });
 
         select.addEventListener('change', function() {
@@ -340,7 +337,7 @@
 
         group.appendChild(select);
       } else {
-        // Color buttons
+        // Color/Other buttons
         const btnGroup = document.createElement('div');
         btnGroup.className = 'option-buttons';
 
@@ -348,13 +345,14 @@
           const btn = document.createElement('button');
           btn.className = 'option-btn' + (i === 0 ? ' active' : '');
           btn.textContent = val;
+          
+          if (i === 0) selectedOptions[option.name] = val;
+
           btn.onclick = function() {
-            btnGroup.querySelectorAll('.option-btn')
-              .forEach(b => b.classList.remove('active'));
+            btnGroup.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             selectedOptions[option.name] = val;
           };
-          if (i === 0) selectedOptions[option.name] = val;
           btnGroup.appendChild(btn);
         });
 
@@ -379,37 +377,48 @@
    * Special rule: if Black + Medium selected, also add Soft Winter Jacket
    */
   function addToCart() {
-    // Find matching variant
+    // Find matching variant using option1, option2, option3
     const matchedVariant = currentVariants.find(variant => {
-      return Object.keys(selectedOptions).every(optionName => {
-        return variant.title.includes(selectedOptions[optionName]);
+      let isMatch = true;
+      currentOptionsConfig.forEach((opt, index) => {
+        const optionKey = 'option' + (index + 1);
+        if (variant[optionKey] !== selectedOptions[opt.name]) {
+          isMatch = false;
+        }
       });
+      return isMatch;
     });
 
     if (!matchedVariant) {
-      alert('Please select all options!');
+      alert('This combination is currently unavailable.');
       return;
     }
 
     const items = [{ id: matchedVariant.id, quantity: 1 }];
 
-    // Special rule - Black + Medium = also add Soft Winter Jacket
-    const isBlack = selectedOptions['Color'] === 'Black';
-    const isMedium = selectedOptions['Size'] === 'M' || 
-                     selectedOptions['Size'] === 'Medium';
+    // Check special rule - Black + Medium = also add Soft Winter Jacket
+    let hasBlack = false;
+    let hasMedium = false;
 
-    if (isBlack && isMedium) {
-      // Find Soft Winter Jacket variant
+    Object.keys(selectedOptions).forEach(key => {
+      const val = selectedOptions[key].toLowerCase();
+      if (val === 'black') hasBlack = true;
+      if (val === 'm' || val === 'medium') hasMedium = true;
+    });
+
+    if (hasBlack && hasMedium) {
       fetch('/products/soft-winter-jacket.js')
         .then(r => r.json())
         .then(product => {
-          items.push({ 
-            id: product.variants[0].id, 
-            quantity: 1 
-          });
+          if (product && product.variants && product.variants.length > 0) {
+             items.push({ 
+               id: product.variants[0].id, 
+               quantity: 1 
+             });
+          }
           postToCart(items);
         })
-        .catch(() => postToCart(items));
+        .catch(() => postToCart(items)); // Proceed anyway if jacket fetch fails
     } else {
       postToCart(items);
     }
@@ -419,6 +428,11 @@
    * Post items to Shopify cart
    */
   function postToCart(items) {
+    const btn = document.querySelector('.add-to-cart-btn');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = 'ADDING...';
+    btn.disabled = true;
+
     fetch('/cart/add.js', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -427,11 +441,14 @@
     .then(r => r.json())
     .then(() => {
       closePopup();
+      // Redirect to cart page to show added items
       window.location.href = '/cart';
     })
     .catch(err => {
       console.error('Cart error:', err);
       alert('Something went wrong. Please try again.');
+      btn.innerHTML = originalText;
+      btn.disabled = false;
     });
   }
 </script>
@@ -443,6 +460,7 @@
     {
       "type": "product",
       "name": "Product",
+      "limit": 6,
       "settings": [
         {
           "type": "product",
