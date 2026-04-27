@@ -19,86 +19,275 @@
   {%- assign bot_url = section.settings.bg_image_bottom | img_url: 'master' -%}
 {%- endif -%}
 
-<!-- All critical layout is via inline styles so Dawn theme cannot override them -->
-<div style="width:100%;font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased;">
+<style>
+  /*
+    Override Dawn's color-scheme CSS variables at the section level
+    so that nothing in our banner gets a dark background or light text.
+    This is the ROOT CAUSE of the black blocks and invisible text.
+  */
+  #shopify-section-{{ section.id }} {
+    --color-background: 255, 255, 255 !important;
+    --color-foreground: 0, 0, 0 !important;
+    --gradient-background: #ffffff !important;
+    --color-button: 0, 0, 0 !important;
+    --color-button-text: 255, 255, 255 !important;
+  }
 
-  <!-- ══ NAV BAR (50px) ══ -->
-  <div style="display:flex;align-items:center;justify-content:space-between;height:50px;padding:0 40px;background:#ffffff;border-bottom:1px solid #e8e8e8;">
-    <span style="font-size:15px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:#000;flex-shrink:0;">{{ logo_text }}</span>
-    <span style="font-size:14px;color:#333;text-align:center;flex:1;padding:0 20px;">{{ tagline }}</span>
-    <a href="{{ y_btn_link }}" class="tisso-ybtn" style="display:inline-flex;align-items:center;background:#FFD600;color:#000;padding:10px 22px;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;flex-shrink:0;">
+  /* Force ALL descendants to have white/transparent backgrounds */
+  #shopify-section-{{ section.id }} *:not(.xb-ybtn):not(.xb-bbtn) {
+    background-color: transparent !important;
+    background: transparent !important;
+  }
+
+  /* ── Outer wrapper ── */
+  .xb-wrap {
+    width: 100% !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif !important;
+    -webkit-font-smoothing: antialiased !important;
+    background: #fff !important;
+  }
+
+  /* ── NAV BAR ── */
+  .xb-nav {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    height: 50px !important;
+    padding: 0 40px !important;
+    background: #ffffff !important;
+    border-bottom: 1px solid #e8e8e8 !important;
+  }
+  .xb-logo {
+    font-size: 15px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.1em !important;
+    text-transform: uppercase !important;
+    color: #000 !important;
+    flex-shrink: 0 !important;
+  }
+  .xb-tagline {
+    font-size: 14px !important;
+    color: #333 !important;
+    text-align: center !important;
+    flex: 1 !important;
+    padding: 0 20px !important;
+  }
+  .xb-ybtn {
+    display: inline-flex !important;
+    align-items: center !important;
+    background: #FFD600 !important;
+    color: #000 !important;
+    padding: 10px 22px !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+    text-decoration: none !important;
+    flex-shrink: 0 !important;
+    border: none !important;
+    min-width: unset !important;
+    min-height: unset !important;
+    border-radius: 0 !important;
+    transition: background 0.2s ease, letter-spacing 0.25s ease !important;
+  }
+  .xb-ybtn::before, .xb-ybtn::after { display: none !important; }
+  .xb-ybtn:hover { background: #e6c000 !important; letter-spacing: 0.12em !important; }
+
+  /* ── HERO WRAPPER ── */
+  .xb-hero {
+    width: 100% !important;
+    height: 490px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+  }
+
+  /* ── TOP BAND ── */
+  .xb-top {
+    width: 100% !important;
+    height: 245px !important;
+    flex-shrink: 0 !important;
+    position: relative !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+  }
+  .xb-top img {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center center !important;
+    display: block !important;
+  }
+
+  /* ── BOTTOM BAND ── */
+  .xb-bot {
+    width: 100% !important;
+    height: 245px !important;
+    flex-shrink: 0 !important;
+    position: relative !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+  }
+  .xb-bot img {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center center !important;
+    display: block !important;
+  }
+  .xb-gradient {
+    position: absolute !important;
+    top: 0 !important; left: 0 !important;
+    width: 100% !important; height: 100% !important;
+    background: linear-gradient(to right,
+      rgba(255,255,255,0.96) 0%,
+      rgba(255,255,255,0.75) 28%,
+      rgba(255,255,255,0.00) 55%) !important;
+    z-index: 1 !important;
+    pointer-events: none !important;
+  }
+
+  /* ── TEXT OVERLAY ── */
+  .xb-text {
+    position: absolute !important;
+    top: 50% !important;
+    left: 40px !important;
+    transform: translateY(-50%) !important;
+    z-index: 2 !important;
+    max-width: 380px !important;
+  }
+  .xb-heading {
+    font-size: 46px !important;
+    font-weight: 800 !important;
+    line-height: 1.05 !important;
+    color: #000 !important;
+    margin: 0 0 12px 0 !important;
+    padding: 0 !important;
+  }
+  .xb-desc {
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    color: #222 !important;
+    margin: 0 0 20px 0 !important;
+    padding: 0 !important;
+  }
+  .xb-bbtn {
+    display: inline-flex !important;
+    align-items: center !important;
+    background: #000 !important;
+    color: #fff !important;
+    padding: 12px 26px !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+    text-decoration: none !important;
+    border: none !important;
+    min-width: unset !important;
+    min-height: unset !important;
+    border-radius: 0 !important;
+    transition: background 0.2s ease, letter-spacing 0.25s ease !important;
+  }
+  .xb-bbtn::before, .xb-bbtn::after { display: none !important; }
+  .xb-bbtn:hover { background: #333 !important; letter-spacing: 0.12em !important; }
+
+  /* ── FOOTER ── */
+  .xb-footer {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 40px !important;
+    background: #efefef !important;
+    border-top: 1px solid #ddd !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.12em !important;
+    text-transform: uppercase !important;
+    color: #555 !important;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .xb-nav { flex-wrap: wrap !important; height: auto !important; padding: 12px 20px !important; gap: 10px !important; }
+    .xb-tagline { order: 3 !important; flex: 1 0 100% !important; padding: 0 !important; }
+    .xb-hero { height: auto !important; }
+    .xb-top { height: 180px !important; }
+    .xb-bot { height: auto !important; min-height: 220px !important; padding-bottom: 24px !important; }
+    .xb-text { position: static !important; transform: none !important; padding: 24px 20px 0 !important; max-width: 100% !important; }
+    .xb-heading { font-size: 34px !important; }
+    .xb-gradient { background: rgba(255,255,255,0.85) !important; }
+  }
+</style>
+
+<div class="xb-wrap">
+
+  <!-- NAV BAR -->
+  <div class="xb-nav">
+    <span class="xb-logo">{{ logo_text }}</span>
+    <span class="xb-tagline">{{ tagline }}</span>
+    <a href="{{ y_btn_link }}" class="xb-ybtn">
       {{ y_btn_text }}&nbsp;&nbsp;&#8594;
     </a>
   </div>
 
-  <!-- ══ TOP IMAGE BAND (245px) — pure illustration, no text ══ -->
-  <div style="position:relative;width:100%;height:245px;background:#ffffff;overflow:hidden;">
-    {%- if top_url != blank -%}
-      <img src="{{ top_url }}" alt="" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center center;display:block;z-index:0;">
-    {%- endif -%}
-  </div>
+  <!-- HERO: two stacked bands -->
+  <div class="xb-hero">
 
-  <!-- ══ BOTTOM IMAGE BAND (245px) — illustration + text overlay ══ -->
-  <div style="position:relative;width:100%;height:245px;background:#ffffff;overflow:hidden;">
+    <!-- TOP band: pure illustration -->
+    <div class="xb-top">
+      {%- if top_url -%}
+        <img src="{{ top_url }}" alt="Banner illustration top" loading="eager">
+      {%- endif -%}
+    </div>
 
-    <!-- Background image -->
-    {%- if bot_url != blank -%}
-      <img src="{{ bot_url }}" alt="" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center center;display:block;z-index:0;">
-    {%- endif -%}
-
-    <!-- White left-to-right gradient so text is readable -->
-    <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(to right,rgba(255,255,255,0.96) 0%,rgba(255,255,255,0.75) 28%,rgba(255,255,255,0.00) 55%);z-index:1;pointer-events:none;"></div>
-
-    <!-- Text overlay: heading, description, button -->
-    <div style="position:absolute;top:50%;left:40px;transform:translateY(-50%);z-index:2;max-width:380px;background:transparent;">
-      <h1 style="font-size:46px;font-weight:800;line-height:1.05;color:#000;margin:0 0 12px 0;padding:0;background:transparent;">{{ heading }}</h1>
-      <p style="font-size:14px;line-height:1.6;color:#222;margin:0 0 20px 0;padding:0;background:transparent;">{{ description }}</p>
-      <a href="{{ b_btn_link }}" class="tisso-bbtn" style="display:inline-flex;align-items:center;background:#000;color:#fff;padding:12px 26px;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;">
-        {{ b_btn_text }}&nbsp;&nbsp;&#8594;
-      </a>
+    <!-- BOTTOM band: illustration + text -->
+    <div class="xb-bot">
+      {%- if bot_url -%}
+        <img src="{{ bot_url }}" alt="Banner illustration bottom" loading="eager">
+      {%- endif -%}
+      <div class="xb-gradient"></div>
+      <div class="xb-text">
+        <h1 class="xb-heading">{{ heading }}</h1>
+        <p class="xb-desc">{{ description }}</p>
+        <a href="{{ b_btn_link }}" class="xb-bbtn">
+          {{ b_btn_text }}&nbsp;&nbsp;&#8594;
+        </a>
+      </div>
     </div>
 
   </div>
 
-  <!-- ══ FOOTER BAR (40px) ══ -->
-  <div style="display:flex;align-items:center;justify-content:center;height:40px;background:#efefef;border-top:1px solid #ddd;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#555;">
-    {{ footer_text }}
-  </div>
+  <!-- FOOTER -->
+  <div class="xb-footer">{{ footer_text }}</div>
 
 </div>
-
-<!-- Only hover effects need a <style> block — Dawn cannot affect hover transitions -->
-<style>
-  .tisso-ybtn:hover { background: #e6c000 !important; letter-spacing: 0.12em !important; }
-  .tisso-bbtn:hover { background: #333 !important; letter-spacing: 0.12em !important; }
-
-  @media (max-width: 768px) {
-    .tisso-top-band-wrap  { height: 180px !important; }
-    .tisso-bot-band-wrap  { height: auto !important; min-height: 200px !important; padding-bottom: 24px !important; }
-    .tisso-bot-text       { position: static !important; transform: none !important; padding: 24px 20px 0 !important; }
-    .tisso-bot-h1         { font-size: 32px !important; }
-  }
-</style>
 
 {% schema %}
 {
   "name": "Custom Banner",
   "settings": [
-    { "type": "header",    "content": "Navigation Bar" },
-    { "type": "text",      "id": "logo_text",           "label": "Logo Text",            "default": "TISSO VISON" },
-    { "type": "text",      "id": "tagline",              "label": "Center Tagline",       "default": "Find the ideal gift for your loved ones." },
-    { "type": "text",      "id": "yellow_button_text",   "label": "Yellow Button Text",   "default": "CHOOSE GIFT" },
-    { "type": "url",       "id": "yellow_button_link",   "label": "Yellow Button Link" },
-    { "type": "header",    "content": "Main Content" },
-    { "type": "text",      "id": "heading",              "label": "Main Heading",         "default": "The Gift Guide" },
-    { "type": "textarea",  "id": "description",          "label": "Description",          "default": "Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gift to delight your loved ones this holiday season." },
-    { "type": "text",      "id": "black_button_text",    "label": "Black Button Text",    "default": "SHOP NOW" },
-    { "type": "url",       "id": "black_button_link",    "label": "Black Button Link" },
-    { "type": "header",    "content": "Background Images" },
-    { "type": "image_picker", "id": "bg_image_top",     "label": "Top Band Image (upper half of hero)" },
-    { "type": "image_picker", "id": "bg_image_bottom",  "label": "Bottom Band Image (lower half — behind text)" },
-    { "type": "header",    "content": "Footer" },
-    { "type": "text",      "id": "footer_text",          "label": "Footer Text",          "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 9XL" }
+    { "type": "header",       "content": "Navigation Bar" },
+    { "type": "text",         "id": "logo_text",           "label": "Logo Text",            "default": "TISSO VISON" },
+    { "type": "text",         "id": "tagline",              "label": "Center Tagline",       "default": "Find the ideal gift for your loved ones." },
+    { "type": "text",         "id": "yellow_button_text",   "label": "Yellow Button Text",   "default": "CHOOSE GIFT" },
+    { "type": "url",          "id": "yellow_button_link",   "label": "Yellow Button Link" },
+    { "type": "header",       "content": "Main Content" },
+    { "type": "text",         "id": "heading",              "label": "Main Heading",         "default": "The Gift Guide" },
+    { "type": "textarea",     "id": "description",          "label": "Description",          "default": "Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gift to delight your loved ones this holiday season." },
+    { "type": "text",         "id": "black_button_text",    "label": "Black Button Text",    "default": "SHOP NOW" },
+    { "type": "url",          "id": "black_button_link",    "label": "Black Button Link" },
+    { "type": "header",       "content": "Background Images" },
+    { "type": "image_picker", "id": "bg_image_top",         "label": "Top Band Image (upper half)" },
+    { "type": "image_picker", "id": "bg_image_bottom",      "label": "Bottom Band Image (lower half — behind text)" },
+    { "type": "header",       "content": "Footer" },
+    { "type": "text",         "id": "footer_text",          "label": "Footer Text",          "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 9XL" }
   ],
   "presets": [{ "name": "Custom Banner" }]
 }
