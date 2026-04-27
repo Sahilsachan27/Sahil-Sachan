@@ -1,202 +1,252 @@
 {% comment %} Custom Banner Section {% endcomment %}
 
 {%- liquid
-  assign logo_text = section.settings.logo_text | default: 'TISSO VISON'
-  assign tagline = section.settings.tagline | default: 'Find the ideal gift for your loved ones.'
-  assign yellow_btn_text = section.settings.yellow_button_text | default: 'CHOOSE GIFT'
-  assign yellow_btn_link = section.settings.yellow_button_link | default: '#'
-  assign heading = section.settings.heading | default: 'The Gift Guide'
-  assign description = section.settings.description | default: 'Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gift to delight your loved ones this holiday season.'
-  assign black_btn_text = section.settings.black_button_text | default: 'SHOP NOW'
-  assign black_btn_link = section.settings.black_button_link | default: '#'
-  assign footer_text = section.settings.footer_text | default: 'SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 9XL'
+  assign logo_text     = section.settings.logo_text        | default: 'TISSO VISON'
+  assign tagline       = section.settings.tagline           | default: 'Find the ideal gift for your loved ones.'
+  assign y_btn_text    = section.settings.yellow_button_text | default: 'CHOOSE GIFT'
+  assign y_btn_link    = section.settings.yellow_button_link | default: '#'
+  assign heading       = section.settings.heading           | default: 'The Gift Guide'
+  assign description   = section.settings.description       | default: 'Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gift to delight your loved ones this holiday season.'
+  assign b_btn_text    = section.settings.black_button_text  | default: 'SHOP NOW'
+  assign b_btn_link    = section.settings.black_button_link  | default: '#'
+  assign footer_text   = section.settings.footer_text       | default: 'SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 9XL'
 -%}
 
-<section class="custom-banner-section">
-  <!-- Top Navigation Bar -->
-  <div class="cb-top-bar">
-    <div class="cb-top-left">
-      <span class="cb-logo">{{ logo_text }}</span>
-    </div>
-    <div class="cb-top-center">
-      <span class="cb-tagline">{{ tagline }}</span>
-    </div>
-    <div class="cb-top-right">
-      <a href="{{ yellow_btn_link }}" class="cb-yellow-btn">
-        {{ yellow_btn_text }} <span>→</span>
+{%- comment %} Build the inline background-image style safely — only if an image is selected {%- endcomment -%}
+{%- if section.settings.bg_image != blank -%}
+  {%- assign bg_img_url = section.settings.bg_image | img_url: 'master' -%}
+  {%- assign hero_bg_style = 'background-image:url(' | append: bg_img_url | append: ');' -%}
+{%- else -%}
+  {%- assign hero_bg_style = '' -%}
+{%- endif -%}
+
+<section class="cb" id="cb-{{ section.id }}">
+
+  {{- '<!-- ── TOP NAV BAR ── -->' }}
+  <div class="cb__nav">
+    <span class="cb__logo">{{ logo_text }}</span>
+    <span class="cb__tagline">{{ tagline }}</span>
+    <a href="{{ y_btn_link }}" class="cb__btn cb__btn--yellow">
+      <span>{{ y_btn_text }}</span>
+      <svg class="cb__arrow" viewBox="0 0 20 10" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M1 5h18M13 1l6 4-6 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+
+  {{- '<!-- ── HERO AREA – background-image applied inline so Shopify image is always rendered ── -->' }}
+  <div class="cb__hero" style="{{ hero_bg_style }}">
+    <div class="cb__hero-content">
+      <h1 class="cb__heading">{{ heading }}</h1>
+      <p class="cb__desc">{{ description }}</p>
+      <a href="{{ b_btn_link }}" class="cb__btn cb__btn--black">
+        <span>{{ b_btn_text }}</span>
+        <svg class="cb__arrow" viewBox="0 0 20 10" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M1 5h18M13 1l6 4-6 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
     </div>
   </div>
 
-  <!-- Main Banner Area (Simplified 2-Column Layout) -->
-  <div class="cb-main-area">
-    <div class="cb-left-column">
-      <h1 class="cb-heading">{{ heading }}</h1>
-      <p class="cb-description">{{ description }}</p>
-      
-      <a href="{{ black_btn_link }}" class="cb-black-btn">
-        {{ black_btn_text }} <span>→</span>
-      </a>
-    </div>
-    
-    <div class="cb-right-column">
-      {% if section.settings.bg_image != blank %}
-        <img src="{{ section.settings.bg_image | img_url: 'master' }}" alt="{{ section.settings.bg_image.alt | escape }}" class="cb-simple-img">
-      {% endif %}
-      {% if section.settings.image_2 != blank %}
-        <img src="{{ section.settings.image_2 | img_url: 'master' }}" alt="Illustration 2" class="cb-simple-img">
-      {% endif %}
-      {% if section.settings.image_3 != blank %}
-        <img src="{{ section.settings.image_3 | img_url: 'master' }}" alt="Illustration 3" class="cb-simple-img">
-      {% endif %}
-      {% if section.settings.image_4 != blank %}
-        <img src="{{ section.settings.image_4 | img_url: 'master' }}" alt="Illustration 4" class="cb-simple-img">
-      {% endif %}
-    </div>
+  {{- '<!-- ── FOOTER BAR ── -->' }}
+  <div class="cb__footer">
+    <span>{{ footer_text }}</span>
   </div>
 
-  <!-- Footer Banner -->
-  <div class="cb-footer">
-    <p>{{ footer_text }}</p>
-  </div>
 </section>
 
 <style>
-  .custom-banner-section {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    background: #fff;
-    margin: 0;
+/* ======================================================
+   CUSTOM BANNER  –  #cb-{{ section.id }}
+   Scoped to this section ID so styles never leak.
+====================================================== */
+
+#cb-{{ section.id }} {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── NAV BAR ── */
+#cb-{{ section.id }} .cb__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 40px;
+  background: #ffffff;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+#cb-{{ section.id }} .cb__logo {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #000;
+  flex-shrink: 0;
+}
+
+#cb-{{ section.id }} .cb__tagline {
+  font-size: 14px;
+  color: #333;
+  text-align: center;
+  flex: 1;
+  padding: 0 24px;
+}
+
+/* ── BUTTONS ── */
+#cb-{{ section.id }} .cb__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 26px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, gap 0.3s ease;
+  white-space: nowrap;
+}
+
+#cb-{{ section.id }} .cb__arrow {
+  width: 20px;
+  height: 10px;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+#cb-{{ section.id }} .cb__btn:hover .cb__arrow {
+  transform: translateX(6px);
+}
+
+/* Yellow button */
+#cb-{{ section.id }} .cb__btn--yellow {
+  background-color: #FFD600;
+  color: #000;
+}
+#cb-{{ section.id }} .cb__btn--yellow:hover {
+  background-color: #e8c200;
+}
+
+/* Black button */
+#cb-{{ section.id }} .cb__btn--black {
+  background-color: #000;
+  color: #fff;
+}
+#cb-{{ section.id }} .cb__btn--black:hover {
+  background-color: #222;
+}
+
+/* ── HERO AREA ── */
+#cb-{{ section.id }} .cb__hero {
+  position: relative;
+  width: 100%;
+  /* Fixed height matches the Figma design */
+  height: 520px;
+  /* Fallback colour shown before image loads or when no image is set */
+  background-color: #f4f4f4;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+/*
+  Left-side white gradient so the black text is
+  always readable against any background image.
+*/
+#cb-{{ section.id }} .cb__hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.92) 0%,
+    rgba(255, 255, 255, 0.70) 30%,
+    rgba(255, 255, 255, 0.00) 58%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Text block – bottom-left, matching Figma */
+#cb-{{ section.id }} .cb__hero-content {
+  position: absolute;
+  bottom: 48px;
+  left: 40px;
+  z-index: 2;
+  max-width: 400px;
+}
+
+#cb-{{ section.id }} .cb__heading {
+  font-size: 54px;
+  font-weight: 800;
+  line-height: 1.0;
+  color: #000;
+  margin: 0 0 18px 0;
+}
+
+#cb-{{ section.id }} .cb__desc {
+  font-size: 15px;
+  line-height: 1.65;
+  color: #1a1a1a;
+  margin: 0 0 30px 0;
+}
+
+/* ── FOOTER BAR ── */
+#cb-{{ section.id }} .cb__footer {
+  background: #efefef;
+  padding: 13px 20px;
+  text-align: center;
+  border-top: 1px solid #ddd;
+}
+
+#cb-{{ section.id }} .cb__footer span {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #555;
+}
+
+/* ── RESPONSIVE ── */
+@media screen and (max-width: 900px) {
+  #cb-{{ section.id }} .cb__nav {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 14px 20px;
+  }
+  #cb-{{ section.id }} .cb__tagline {
+    order: 3;
+    flex: 1 0 100%;
+    text-align: center;
     padding: 0;
   }
+}
 
-  /* Top Bar */
-  .cb-top-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 5%;
-    background: #fff;
-    border-bottom: 1px solid #f0f0f0;
+@media screen and (max-width: 600px) {
+  #cb-{{ section.id }} .cb__nav {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
-  
-  .cb-top-left { flex: 1; display: flex; justify-content: flex-start; }
-  .cb-top-center { flex: 2; display: flex; justify-content: center; text-align: center; }
-  .cb-top-right { flex: 1; display: flex; justify-content: flex-end; }
-
-  .cb-logo { font-size: 18px; font-weight: 700; letter-spacing: 1px; color: #000; text-transform: uppercase; }
-  .cb-tagline { font-size: 14px; color: #333; }
-  
-  .cb-yellow-btn {
-    display: inline-flex;
-    align-items: center;
-    background: #FFD700;
-    color: #000;
-    padding: 10px 24px;
-    font-size: 13px;
-    font-weight: 600;
-    text-transform: uppercase;
-    text-decoration: none;
-    transition: background 0.2s ease;
+  #cb-{{ section.id }} .cb__hero {
+    height: 440px;
   }
-  .cb-yellow-btn:hover { background: #e6c200; }
-  .cb-yellow-btn span { margin-left: 8px; }
-
-  /* Main Area - 2 Columns */
-  .cb-main-area {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    padding: 80px 5%;
-    background: #fff;
-    gap: 40px;
-  }
-
-  .cb-left-column {
-    flex: 1;
-    min-width: 300px;
-  }
-
-  .cb-right-column {
-    flex: 1.2;
-    min-width: 300px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-  }
-
-  .cb-simple-img {
+  #cb-{{ section.id }} .cb__hero-content {
+    left: 20px;
+    right: 20px;
+    bottom: 32px;
     max-width: 100%;
-    height: auto;
-    max-height: 450px;
-    object-fit: contain;
   }
-
-  /* Specific styles to arrange multiple images neatly if they upload the individual pieces */
-  .cb-right-column img:nth-child(2),
-  .cb-right-column img:nth-child(3),
-  .cb-right-column img:nth-child(4) {
-    max-width: 45%; 
-    max-height: 200px;
+  #cb-{{ section.id }} .cb__hero::before {
+    background: rgba(255, 255, 255, 0.80);
   }
-
-  .cb-heading {
-    font-size: 56px;
-    font-weight: 700;
-    margin: 0 0 20px 0;
-    color: #000;
-    line-height: 1.1;
+  #cb-{{ section.id }} .cb__heading {
+    font-size: 38px;
   }
-
-  .cb-description {
-    font-size: 16px;
-    color: #333;
-    line-height: 1.6;
-    margin: 0 0 35px 0;
-  }
-
-  .cb-black-btn {
-    display: inline-flex;
-    align-items: center;
-    background: #000;
-    color: #fff;
-    padding: 14px 36px;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    text-decoration: none;
-    transition: background 0.2s ease;
-  }
-  .cb-black-btn:hover { background: #333; }
-  .cb-black-btn span { margin-left: 12px; }
-
-  /* Footer */
-  .cb-footer {
-    background: #f8f8f8;
-    padding: 15px 20px;
-    text-align: center;
-    border-top: 1px solid #eee;
-  }
-  .cb-footer p {
-    margin: 0;
-    font-size: 12px;
-    font-weight: 500;
-    color: #666;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-
-  /* Responsive */
-  @media (max-width: 768px) {
-    .cb-top-bar { flex-direction: column; gap: 15px; padding: 20px; }
-    .cb-main-area { padding: 40px 5%; flex-direction: column-reverse; text-align: center; }
-    .cb-heading { font-size: 40px; }
-  }
+}
 </style>
 
 {% schema %}
@@ -259,31 +309,12 @@
     },
     {
       "type": "header",
-      "content": "Images (Upload 1 big pattern OR multiple pieces)"
+      "content": "Background & Footer"
     },
     {
       "type": "image_picker",
       "id": "bg_image",
-      "label": "Image 1 (Main Illustration or Camera)"
-    },
-    {
-      "type": "image_picker",
-      "id": "image_2",
-      "label": "Image 2 (e.g. Watch)"
-    },
-    {
-      "type": "image_picker",
-      "id": "image_3",
-      "label": "Image 3 (e.g. Lens)"
-    },
-    {
-      "type": "image_picker",
-      "id": "image_4",
-      "label": "Image 4 (Optional)"
-    },
-    {
-      "type": "header",
-      "content": "Footer Area"
+      "label": "Background Illustration"
     },
     {
       "type": "text",
