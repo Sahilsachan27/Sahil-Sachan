@@ -1,4 +1,36 @@
-{% comment %} Custom Banner Section {% endcomment %}
+{% comment %}
+  ============================================================
+  CUSTOM BANNER SECTION
+  ============================================================
+  Layout: Nav (50px) + Top Image (245px) + Bottom Image (245px) + Footer (40px) = 580px
+  
+  HOW TO ADJUST:
+  ── Banner total height ──
+  Change .cb-hero height (currently 490px) and the two band heights (.cb-top, .cb-bot = 245px each).
+  
+  ── Move images left/right ──
+  Change object-position on .cb-top img or .cb-bot img.
+  Values: "left center", "center center", "right center", "20% center", etc.
+  
+  ── Move images up/down ──
+  Change object-position on .cb-top img or .cb-bot img.
+  Values: "center top", "center center", "center bottom", "center 30%", etc.
+  
+  ── Resize images (zoom in/out) ──
+  Change object-fit on .cb-top img or .cb-bot img.
+  "cover" = fill container (may crop). "contain" = show full image (may letterbox).
+  
+  ── Move text left/right ──
+  Change left on .cb-text. Currently 40px. Set to 80px to push right, 20px to push left.
+  
+  ── Move text up/down ──
+  Change top on .cb-text. Currently 50%. Set to 30% for higher, 70% for lower.
+  
+  ── Make banner full screen width ──
+  Already set. If it's not full width, Dawn is constraining it.
+  The fix is on .cb-section-reset which sets width:100vw and negative margins.
+  ============================================================
+{% endcomment %}
 
 {%- liquid
   assign logo_text   = section.settings.logo_text           | default: 'TISSO VISON'
@@ -12,70 +44,89 @@
   assign footer_text = section.settings.footer_text          | default: 'SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 9XL'
 -%}
 
-{%- if section.settings.bg_image_top != blank -%}
-  {%- assign top_url = section.settings.bg_image_top | img_url: 'master' -%}
-{%- endif -%}
-{%- if section.settings.bg_image_bottom != blank -%}
-  {%- assign bot_url = section.settings.bg_image_bottom | img_url: 'master' -%}
-{%- endif -%}
-
 <style>
-  /*
-    Override Dawn's color-scheme CSS variables at the section level
-    so that nothing in our banner gets a dark background or light text.
-    This is the ROOT CAUSE of the black blocks and invisible text.
-  */
+  /* ============================================================
+     DAWN THEME OVERRIDE
+     Dawn wraps every section in #shopify-section-{{ section.id }}.
+     It applies CSS variables (--color-background, etc.) that can
+     cause black/yellow backgrounds. We override ALL of them here.
+     ============================================================ */
   #shopify-section-{{ section.id }} {
     --color-background: 255, 255, 255 !important;
-    --color-foreground: 0, 0, 0 !important;
     --gradient-background: #ffffff !important;
-    --color-button: 0, 0, 0 !important;
-    --color-button-text: 255, 255, 255 !important;
+    --color-foreground: 0, 0, 0 !important;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
   }
 
-  /* Force ALL descendants to have white/transparent backgrounds */
-  #shopify-section-{{ section.id }} *:not(.xb-ybtn):not(.xb-bbtn) {
-    background-color: transparent !important;
-    background: transparent !important;
-  }
-
-  /* ── Outer wrapper ── */
-  .xb-wrap {
-    width: 100% !important;
+  /* ============================================================
+     FULL-WIDTH RESET
+     Dawn puts sections inside a max-width container. This breaks
+     out of that container so the banner spans the full viewport.
+     ============================================================ */
+  .cb-section-reset {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    margin-left: calc(-50vw + 50%) !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
     font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif !important;
-    -webkit-font-smoothing: antialiased !important;
-    background: #fff !important;
   }
 
-  /* ── NAV BAR ── */
-  .xb-nav {
+  /* ============================================================
+     NAV BAR – 50px fixed height
+     ============================================================ */
+  .cb-nav {
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
     height: 50px !important;
+    max-height: 50px !important;
+    min-height: 50px !important;
     padding: 0 40px !important;
     background: #ffffff !important;
     border-bottom: 1px solid #e8e8e8 !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
   }
-  .xb-logo {
+
+  .cb-logo {
     font-size: 15px !important;
     font-weight: 800 !important;
     letter-spacing: 0.1em !important;
     text-transform: uppercase !important;
     color: #000 !important;
     flex-shrink: 0 !important;
+    flex-grow: 0 !important;
+    height: auto !important;
+    max-height: 50px !important;
+    background: transparent !important;
   }
-  .xb-tagline {
+
+  .cb-tagline {
     font-size: 14px !important;
     color: #333 !important;
     text-align: center !important;
-    flex: 1 !important;
+    flex: 1 1 auto !important;
     padding: 0 20px !important;
+    height: auto !important;
+    max-height: 50px !important;
+    background: transparent !important;
   }
-  .xb-ybtn {
+
+  /* Yellow button — CHOOSE GIFT
+     NOTE: height/max-height are critical to prevent Dawn's 25-million-px bug */
+  .cb-ybtn {
     display: inline-flex !important;
     align-items: center !important;
+    justify-content: center !important;
     background: #FFD600 !important;
+    background-color: #FFD600 !important;
     color: #000 !important;
     padding: 10px 22px !important;
     font-size: 12px !important;
@@ -84,35 +135,88 @@
     text-transform: uppercase !important;
     text-decoration: none !important;
     flex-shrink: 0 !important;
-    border: none !important;
-    min-width: unset !important;
+    flex-grow: 0 !important;
+    /* CRITICAL: prevent Dawn from stretching this to millions of px */
+    height: auto !important;
+    max-height: 40px !important;
     min-height: unset !important;
+    min-width: unset !important;
+    border: none !important;
     border-radius: 0 !important;
+    box-shadow: none !important;
     transition: background 0.2s ease, letter-spacing 0.25s ease !important;
+    position: relative !important;
   }
-  .xb-ybtn::before, .xb-ybtn::after { display: none !important; }
-  .xb-ybtn:hover { background: #e6c000 !important; letter-spacing: 0.12em !important; }
+  /* Kill Dawn's ::before and ::after overlays on buttons */
+  .cb-ybtn::before,
+  .cb-ybtn::after { content: none !important; display: none !important; }
+  .cb-ybtn:hover { background: #e6c000 !important; letter-spacing: 0.12em !important; }
 
-  /* ── HERO WRAPPER ── */
-  .xb-hero {
+  /* ============================================================
+     HERO WRAPPER – contains two image bands
+     Total height: 490px (245 + 245)
+     ── To make taller: increase this and the two band heights ──
+     ============================================================ */
+  .cb-hero {
     width: 100% !important;
     height: 490px !important;
-    display: flex !important;
-    flex-direction: column !important;
+    max-height: 490px !important;
+    min-height: 490px !important;
+    display: block !important;
     overflow: hidden !important;
     background: #ffffff !important;
+    position: relative !important;
+    box-sizing: border-box !important;
   }
 
-  /* ── TOP BAND ── */
-  .xb-top {
+  /* ============================================================
+     TOP BAND – 245px – pure illustration, no text
+     ── Move image: change object-position below ──
+     ============================================================ */
+  .cb-top {
     width: 100% !important;
     height: 245px !important;
-    flex-shrink: 0 !important;
+    max-height: 245px !important;
+    min-height: 245px !important;
     position: relative !important;
     overflow: hidden !important;
+    display: block !important;
     background: #ffffff !important;
+    box-sizing: border-box !important;
   }
-  .xb-top img {
+  .cb-top-img {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    /* ── object-fit: how image fills the container ── */
+    /* "cover" = fill & crop.  "contain" = show all, may letterbox */
+    object-fit: cover !important;
+    /* ── object-position: which part of the image to show ── */
+    /* "center center" / "left top" / "right bottom" / "50% 30%" etc. */
+    object-position: center center !important;
+    display: block !important;
+    max-width: none !important;
+    border: none !important;
+  }
+
+  /* ============================================================
+     BOTTOM BAND – 245px – illustration + text overlay
+     ── Move image: change object-position below ──
+     ============================================================ */
+  .cb-bot {
+    width: 100% !important;
+    height: 245px !important;
+    max-height: 245px !important;
+    min-height: 245px !important;
+    position: relative !important;
+    overflow: hidden !important;
+    display: block !important;
+    background: #ffffff !important;
+    box-sizing: border-box !important;
+  }
+  .cb-bot-img {
     position: absolute !important;
     top: 0 !important;
     left: 0 !important;
@@ -121,89 +225,112 @@
     object-fit: cover !important;
     object-position: center center !important;
     display: block !important;
+    max-width: none !important;
+    border: none !important;
+    z-index: 0 !important;
   }
 
-  /* ── BOTTOM BAND ── */
-  .xb-bot {
-    width: 100% !important;
-    height: 245px !important;
-    flex-shrink: 0 !important;
-    position: relative !important;
-    overflow: hidden !important;
-    background: #ffffff !important;
-  }
-  .xb-bot img {
+  /* White gradient overlay – makes text readable over the image */
+  .cb-gradient {
     position: absolute !important;
     top: 0 !important;
     left: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    object-fit: cover !important;
-    object-position: center center !important;
-    display: block !important;
-  }
-  .xb-gradient {
-    position: absolute !important;
-    top: 0 !important; left: 0 !important;
-    width: 100% !important; height: 100% !important;
-    background: linear-gradient(to right,
+    /* ── Gradient: fades from white (left) to transparent (right) ── */
+    /* Adjust the percentages to control how far the white extends */
+    background: linear-gradient(
+      to right,
       rgba(255,255,255,0.96) 0%,
-      rgba(255,255,255,0.75) 28%,
-      rgba(255,255,255,0.00) 55%) !important;
+      rgba(255,255,255,0.80) 25%,
+      rgba(255,255,255,0.00) 55%
+    ) !important;
     z-index: 1 !important;
     pointer-events: none !important;
   }
 
-  /* ── TEXT OVERLAY ── */
-  .xb-text {
+  /* ============================================================
+     TEXT OVERLAY – heading, description, SHOP NOW button
+     ── Move left/right: change "left" below ──
+     ── Move up/down: change "top" below ──
+     ============================================================ */
+  .cb-text {
     position: absolute !important;
+    /* ── Vertical position: 50% = centered. Use 30% for higher, 70% for lower ── */
     top: 50% !important;
+    /* ── Horizontal position: 40px from left edge ── */
     left: 40px !important;
     transform: translateY(-50%) !important;
     z-index: 2 !important;
+    /* ── Max width of text block. Increase for wider text area ── */
     max-width: 380px !important;
+    background: transparent !important;
+    height: auto !important;
+    max-height: none !important;
   }
-  .xb-heading {
+
+  .cb-heading {
     font-size: 46px !important;
     font-weight: 800 !important;
     line-height: 1.05 !important;
     color: #000 !important;
     margin: 0 0 12px 0 !important;
     padding: 0 !important;
+    background: transparent !important;
+    height: auto !important;
+    max-height: none !important;
   }
-  .xb-desc {
+
+  .cb-desc {
     font-size: 14px !important;
     line-height: 1.6 !important;
     color: #222 !important;
     margin: 0 0 20px 0 !important;
     padding: 0 !important;
+    background: transparent !important;
+    height: auto !important;
+    max-height: none !important;
   }
-  .xb-bbtn {
+
+  /* Black button — SHOP NOW */
+  .cb-bbtn {
     display: inline-flex !important;
     align-items: center !important;
-    background: #000 !important;
-    color: #fff !important;
+    justify-content: center !important;
+    background: #000000 !important;
+    background-color: #000000 !important;
+    color: #ffffff !important;
     padding: 12px 26px !important;
     font-size: 12px !important;
     font-weight: 700 !important;
     letter-spacing: 0.08em !important;
     text-transform: uppercase !important;
     text-decoration: none !important;
-    border: none !important;
-    min-width: unset !important;
+    /* CRITICAL: prevent Dawn from stretching this to millions of px */
+    height: auto !important;
+    max-height: 44px !important;
     min-height: unset !important;
+    min-width: unset !important;
+    border: none !important;
     border-radius: 0 !important;
+    box-shadow: none !important;
     transition: background 0.2s ease, letter-spacing 0.25s ease !important;
+    position: relative !important;
   }
-  .xb-bbtn::before, .xb-bbtn::after { display: none !important; }
-  .xb-bbtn:hover { background: #333 !important; letter-spacing: 0.12em !important; }
+  .cb-bbtn::before,
+  .cb-bbtn::after { content: none !important; display: none !important; }
+  .cb-bbtn:hover { background: #333333 !important; letter-spacing: 0.12em !important; }
 
-  /* ── FOOTER ── */
-  .xb-footer {
+  /* ============================================================
+     FOOTER BAR – 40px
+     ============================================================ */
+  .cb-footer {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     height: 40px !important;
+    max-height: 40px !important;
+    min-height: 40px !important;
     background: #efefef !important;
     border-top: 1px solid #ddd !important;
     font-size: 11px !important;
@@ -211,61 +338,86 @@
     letter-spacing: 0.12em !important;
     text-transform: uppercase !important;
     color: #555 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
   }
 
-  /* ── RESPONSIVE ── */
+  /* ============================================================
+     RESPONSIVE – mobile adjustments
+     ============================================================ */
   @media (max-width: 768px) {
-    .xb-nav { flex-wrap: wrap !important; height: auto !important; padding: 12px 20px !important; gap: 10px !important; }
-    .xb-tagline { order: 3 !important; flex: 1 0 100% !important; padding: 0 !important; }
-    .xb-hero { height: auto !important; }
-    .xb-top { height: 180px !important; }
-    .xb-bot { height: auto !important; min-height: 220px !important; padding-bottom: 24px !important; }
-    .xb-text { position: static !important; transform: none !important; padding: 24px 20px 0 !important; max-width: 100% !important; }
-    .xb-heading { font-size: 34px !important; }
-    .xb-gradient { background: rgba(255,255,255,0.85) !important; }
+    .cb-nav {
+      flex-wrap: wrap !important;
+      height: auto !important;
+      max-height: none !important;
+      min-height: unset !important;
+      padding: 12px 20px !important;
+      gap: 10px !important;
+    }
+    .cb-tagline { order: 3 !important; flex: 1 0 100% !important; padding: 0 !important; }
+    .cb-hero { height: auto !important; max-height: none !important; min-height: unset !important; }
+    .cb-top { height: 180px !important; max-height: 180px !important; min-height: 180px !important; }
+    .cb-bot { height: auto !important; max-height: none !important; min-height: 220px !important; }
+    .cb-text {
+      position: static !important;
+      transform: none !important;
+      padding: 24px 20px !important;
+      max-width: 100% !important;
+    }
+    .cb-heading { font-size: 34px !important; }
+    .cb-gradient { background: rgba(255,255,255,0.85) !important; }
   }
 </style>
 
-<div class="xb-wrap">
+<!-- ══════════════════════════════════════════════════
+     HTML STRUCTURE
+     ══════════════════════════════════════════════════ -->
+<div class="cb-section-reset">
 
   <!-- NAV BAR -->
-  <div class="xb-nav">
-    <span class="xb-logo">{{ logo_text }}</span>
-    <span class="xb-tagline">{{ tagline }}</span>
-    <a href="{{ y_btn_link }}" class="xb-ybtn">
-      {{ y_btn_text }}&nbsp;&nbsp;&#8594;
-    </a>
+  <div class="cb-nav">
+    <span class="cb-logo">{{ logo_text }}</span>
+    <span class="cb-tagline">{{ tagline }}</span>
+    <a href="{{ y_btn_link }}" class="cb-ybtn">{{ y_btn_text }}&nbsp;&nbsp;&#8594;</a>
   </div>
 
-  <!-- HERO: two stacked bands -->
-  <div class="xb-hero">
+  <!-- HERO: two stacked image bands -->
+  <div class="cb-hero">
 
-    <!-- TOP band: pure illustration -->
-    <div class="xb-top">
-      {%- if top_url -%}
-        <img src="{{ top_url }}" alt="Banner illustration top" loading="eager">
-      {%- endif -%}
+    <!-- TOP band: pure illustration, no text -->
+    <div class="cb-top">
+      {% if section.settings.bg_image_top != blank %}
+        <img
+          class="cb-top-img"
+          src="{{ section.settings.bg_image_top | img_url: 'master' }}"
+          alt="Banner top illustration"
+          loading="eager"
+        >
+      {% endif %}
     </div>
 
-    <!-- BOTTOM band: illustration + text -->
-    <div class="xb-bot">
-      {%- if bot_url -%}
-        <img src="{{ bot_url }}" alt="Banner illustration bottom" loading="eager">
-      {%- endif -%}
-      <div class="xb-gradient"></div>
-      <div class="xb-text">
-        <h1 class="xb-heading">{{ heading }}</h1>
-        <p class="xb-desc">{{ description }}</p>
-        <a href="{{ b_btn_link }}" class="xb-bbtn">
-          {{ b_btn_text }}&nbsp;&nbsp;&#8594;
-        </a>
+    <!-- BOTTOM band: illustration + text overlay -->
+    <div class="cb-bot">
+      {% if section.settings.bg_image_bottom != blank %}
+        <img
+          class="cb-bot-img"
+          src="{{ section.settings.bg_image_bottom | img_url: 'master' }}"
+          alt="Banner bottom illustration"
+          loading="eager"
+        >
+      {% endif %}
+      <div class="cb-gradient"></div>
+      <div class="cb-text">
+        <h1 class="cb-heading">{{ heading }}</h1>
+        <p class="cb-desc">{{ description }}</p>
+        <a href="{{ b_btn_link }}" class="cb-bbtn">{{ b_btn_text }}&nbsp;&nbsp;&#8594;</a>
       </div>
     </div>
 
   </div>
 
   <!-- FOOTER -->
-  <div class="xb-footer">{{ footer_text }}</div>
+  <div class="cb-footer">{{ footer_text }}</div>
 
 </div>
 
