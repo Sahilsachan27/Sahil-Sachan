@@ -1,7 +1,5 @@
 {% comment %} Custom Banner Section {% endcomment %}
 
-{% comment %} Custom Banner Section {% endcomment %}
-
 {%- liquid
   assign logo_text = section.settings.logo_text | default: 'TISSO VISON'
   assign tagline = section.settings.tagline | default: 'Find the ideal gift for your loved ones.'
@@ -30,21 +28,30 @@
     </div>
   </div>
 
-  <!-- Main Banner Area -->
+  <!-- Main Banner Area (Simplified 2-Column Layout) -->
   <div class="cb-main-area">
-    {% if section.settings.bg_image != blank %}
-    <div class="cb-illustration">
-      <img src="{{ section.settings.bg_image | img_url: 'master' }}" alt="{{ section.settings.bg_image.alt | escape }}" class="bg-image-el" loading="lazy">
-    </div>
-    {% endif %}
-    
-    <div class="cb-content">
+    <div class="cb-left-column">
       <h1 class="cb-heading">{{ heading }}</h1>
       <p class="cb-description">{{ description }}</p>
       
       <a href="{{ black_btn_link }}" class="cb-black-btn">
         {{ black_btn_text }} <span>→</span>
       </a>
+    </div>
+    
+    <div class="cb-right-column">
+      {% if section.settings.bg_image != blank %}
+        <img src="{{ section.settings.bg_image | img_url: 'master' }}" alt="{{ section.settings.bg_image.alt | escape }}" class="cb-simple-img">
+      {% endif %}
+      {% if section.settings.image_2 != blank %}
+        <img src="{{ section.settings.image_2 | img_url: 'master' }}" alt="Illustration 2" class="cb-simple-img">
+      {% endif %}
+      {% if section.settings.image_3 != blank %}
+        <img src="{{ section.settings.image_3 | img_url: 'master' }}" alt="Illustration 3" class="cb-simple-img">
+      {% endif %}
+      {% if section.settings.image_4 != blank %}
+        <img src="{{ section.settings.image_4 | img_url: 'master' }}" alt="Illustration 4" class="cb-simple-img">
+      {% endif %}
     </div>
   </div>
 
@@ -74,39 +81,14 @@
     background: #fff;
     border-bottom: 1px solid #f0f0f0;
   }
+  
+  .cb-top-left { flex: 1; display: flex; justify-content: flex-start; }
+  .cb-top-center { flex: 2; display: flex; justify-content: center; text-align: center; }
+  .cb-top-right { flex: 1; display: flex; justify-content: flex-end; }
 
-  .cb-top-left {
-    flex: 1;
-    display: flex;
-    justify-content: flex-start;
-  }
-
-  .cb-top-center {
-    flex: 2;
-    display: flex;
-    justify-content: center;
-    text-align: center;
-  }
-
-  .cb-top-right {
-    flex: 1;
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  .cb-logo {
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: #000;
-  }
-
-  .cb-tagline {
-    font-size: 14px;
-    color: #333;
-  }
-
+  .cb-logo { font-size: 18px; font-weight: 700; letter-spacing: 1px; color: #000; text-transform: uppercase; }
+  .cb-tagline { font-size: 14px; color: #333; }
+  
   .cb-yellow-btn {
     display: inline-flex;
     align-items: center;
@@ -119,58 +101,47 @@
     text-decoration: none;
     transition: background 0.2s ease;
   }
+  .cb-yellow-btn:hover { background: #e6c200; }
+  .cb-yellow-btn span { margin-left: 8px; }
 
-  .cb-yellow-btn:hover {
-    background: #e6c200;
-  }
-
-  .cb-yellow-btn span {
-    margin-left: 8px;
-    transition: transform 0.2s ease;
-  }
-
-  .cb-yellow-btn:hover span {
-    transform: translateX(4px);
-  }
-
-  /* Main Area */
+  /* Main Area - 2 Columns */
   .cb-main-area {
-    position: relative;
-    width: 100%;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     padding: 80px 5%;
-    box-sizing: border-box;
-    overflow: hidden;
     background: #fff;
+    gap: 40px;
   }
 
-  .cb-illustration {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    pointer-events: none; /* Make sure image doesn't block clicks */
+  .cb-left-column {
+    flex: 1;
+    min-width: 300px;
   }
 
-  .bg-image-el {
-    width: 100%;
-    height: 100%;
-    object-fit: contain; /* Contain ensures the entire image is visible, no cropping */
-    object-position: right center;
+  .cb-right-column {
+    flex: 1.2;
+    min-width: 300px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
   }
 
-  .cb-content {
-    position: relative;
-    z-index: 2;
-    max-width: 480px;
-    background: linear-gradient(90deg, rgba(255,255,255,0.95) 40%, rgba(255,255,255,0.7) 70%, rgba(255,255,255,0) 100%);
-    padding: 30px 40px 30px 0;
-    border-radius: 8px;
+  .cb-simple-img {
+    max-width: 100%;
+    height: auto;
+    max-height: 450px;
+    object-fit: contain;
+  }
+
+  /* Specific styles to arrange multiple images neatly if they upload the individual pieces */
+  .cb-right-column img:nth-child(2),
+  .cb-right-column img:nth-child(3),
+  .cb-right-column img:nth-child(4) {
+    max-width: 45%; 
+    max-height: 200px;
   }
 
   .cb-heading {
@@ -201,19 +172,8 @@
     text-decoration: none;
     transition: background 0.2s ease;
   }
-
-  .cb-black-btn:hover {
-    background: #333;
-  }
-
-  .cb-black-btn span {
-    margin-left: 12px;
-    transition: transform 0.2s ease;
-  }
-
-  .cb-black-btn:hover span {
-    transform: translateX(4px);
-  }
+  .cb-black-btn:hover { background: #333; }
+  .cb-black-btn span { margin-left: 12px; }
 
   /* Footer */
   .cb-footer {
@@ -222,7 +182,6 @@
     text-align: center;
     border-top: 1px solid #eee;
   }
-
   .cb-footer p {
     margin: 0;
     font-size: 12px;
@@ -234,25 +193,9 @@
 
   /* Responsive */
   @media (max-width: 768px) {
-    .cb-top-bar {
-      flex-direction: column;
-      gap: 15px;
-      padding: 20px;
-    }
-    .cb-main-area {
-      padding: 50px 5%;
-    }
-    .cb-content {
-      padding: 20px;
-      background: rgba(255, 255, 255, 0.9);
-      max-width: 100%;
-    }
-    .cb-heading {
-      font-size: 40px;
-    }
-    .cb-illustration {
-      opacity: 0.3;
-    }
+    .cb-top-bar { flex-direction: column; gap: 15px; padding: 20px; }
+    .cb-main-area { padding: 40px 5%; flex-direction: column-reverse; text-align: center; }
+    .cb-heading { font-size: 40px; }
   }
 </style>
 
@@ -316,18 +259,37 @@
     },
     {
       "type": "header",
-      "content": "Footer & Background"
+      "content": "Images (Upload 1 big pattern OR multiple pieces)"
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image",
+      "label": "Image 1 (Main Illustration or Camera)"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_2",
+      "label": "Image 2 (e.g. Watch)"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_3",
+      "label": "Image 3 (e.g. Lens)"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_4",
+      "label": "Image 4 (Optional)"
+    },
+    {
+      "type": "header",
+      "content": "Footer Area"
     },
     {
       "type": "text",
       "id": "footer_text",
       "label": "Footer Text",
       "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 9XL"
-    },
-    {
-      "type": "image_picker",
-      "id": "bg_image",
-      "label": "Background Illustration"
     }
   ],
   "presets": [
