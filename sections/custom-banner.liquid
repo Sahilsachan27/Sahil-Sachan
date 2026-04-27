@@ -76,6 +76,8 @@
     overflow: hidden !important;
     background: #ffffff !important;
     font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif !important;
+    position: relative !important;
+    z-index: 2 !important;
   }
 
   /* ============================================================
@@ -93,6 +95,9 @@
     border-bottom: 1px solid #e8e8e8 !important;
     box-sizing: border-box !important;
     overflow: hidden !important;
+    /* Keep nav above Dawn's header */
+    position: relative !important;
+    z-index: 10 !important;
   }
 
   .cb-logo {
@@ -154,14 +159,15 @@
 
   /* ============================================================
      HERO WRAPPER – contains two image bands
-     Total height: 490px (245 + 245)
-     ── To make taller: increase this and the two band heights ──
+     ── FULL VIEWPORT HEIGHT ──
+     calc(100vh - 90px) = viewport minus nav(50px) minus footer(40px)
+     ── To make shorter: replace calc(100vh - 90px) with a fixed px ──
      ============================================================ */
   .cb-hero {
     width: 100% !important;
-    height: 490px !important;
-    max-height: 490px !important;
-    min-height: 490px !important;
+    height: calc(100vh - 90px) !important;
+    max-height: calc(100vh - 90px) !important;
+    min-height: calc(100vh - 90px) !important;
     display: block !important;
     overflow: hidden !important;
     background: #ffffff !important;
@@ -175,9 +181,11 @@
      ============================================================ */
   .cb-top {
     width: 100% !important;
-    height: 245px !important;
-    max-height: 245px !important;
-    min-height: 245px !important;
+    /* ── TOP BAND HEIGHT: 50% of hero ── */
+    /* Change to 40% or 60% to shift the split point */
+    height: 50% !important;
+    max-height: 50% !important;
+    min-height: 50% !important;
     position: relative !important;
     overflow: hidden !important;
     display: block !important;
@@ -207,9 +215,11 @@
      ============================================================ */
   .cb-bot {
     width: 100% !important;
-    height: 245px !important;
-    max-height: 245px !important;
-    min-height: 245px !important;
+    /* ── BOTTOM BAND HEIGHT: 50% of hero ── */
+    /* Change to 60% (if top is 40%) to give more space for text */
+    height: 50% !important;
+    max-height: 50% !important;
+    min-height: 50% !important;
     position: relative !important;
     overflow: hidden !important;
     display: block !important;
