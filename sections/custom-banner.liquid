@@ -14,6 +14,9 @@
 
 {%- if section.settings.bg_image != blank -%}
   {%- assign bg_url = section.settings.bg_image | img_url: 'master' -%}
+  {%- assign hero_bg = 'background:linear-gradient(to right,rgba(255,255,255,0.93) 0%,rgba(255,255,255,0.70) 30%,rgba(255,255,255,0.00) 58%),url(' | append: bg_url | append: ') center/cover no-repeat;' -%}
+{%- else -%}
+  {%- assign hero_bg = 'background:#f4f4f4;' -%}
 {%- endif -%}
 
 <div class="tisso-banner">
@@ -28,7 +31,7 @@
   </div>
 
   <!-- HERO -->
-  <div class="tisso-hero"{% if bg_url %} style="background-image:url('{{ bg_url }}')"{% endif %}>
+  <div class="tisso-hero" style="{{ hero_bg }}">
     <div class="tisso-text">
       <h1 class="tisso-heading">{{ heading }}</h1>
       <p class="tisso-desc">{{ description }}</p>
@@ -110,18 +113,7 @@
     overflow: hidden;
   }
 
-  /* Left white fade so text stays readable */
-  .tisso-hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to right,
-      rgba(255,255,255,0.95) 0%,
-      rgba(255,255,255,0.75) 32%,
-      rgba(255,255,255,0.00) 60%);
-    pointer-events: none;
-    z-index: 1;
-  }
+  /* Gradient is merged into the inline background style — no ::before needed */
 
   /* Text block – bottom-left, matching Figma */
   .tisso-text {
@@ -130,6 +122,7 @@
     left: 40px;
     z-index: 2;
     max-width: 400px;
+    background: transparent !important;
   }
 
   .tisso-heading {
@@ -138,6 +131,11 @@
     line-height: 1.05;
     color: #000;
     margin-bottom: 16px;
+    background: transparent !important;
+  }
+
+  .tisso-desc {
+    background: transparent !important;
   }
 
   .tisso-desc {
