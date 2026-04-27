@@ -9,7 +9,7 @@
  */
 {
   "sections": {
-    "custom_banner_NRTAkf": {
+    "custom_banner_RFhpw8": {
       "type": "custom-banner",
       "name": "Custom Banner",
       "settings": {
@@ -21,7 +21,8 @@
         "description": "Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gift to delight your loved ones this holiday season.",
         "black_button_text": "SHOP NOW",
         "black_button_link": "",
-        "bg_image": "shopify://shop_images/image_1.png",
+        "bg_image_top": "shopify://shop_images/image_2_16afed62-3013-41d9-acc1-3b2a766b29d0.png",
+        "bg_image_bottom": "shopify://shop_images/image_2.png",
         "footer_text": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 9XL"
       }
     },
@@ -80,7 +81,7 @@
     }
   },
   "order": [
-    "custom_banner_NRTAkf",
+    "custom_banner_RFhpw8",
     "custom_product_grid_KC4EWM"
   ]
 }
