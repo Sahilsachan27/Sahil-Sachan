@@ -1,20 +1,32 @@
 {% comment %} Custom Banner Section {% endcomment %}
 
+{% comment %} Custom Banner Section {% endcomment %}
+
+{%- liquid
+  assign logo_text = section.settings.logo_text | default: 'TISSO VISON'
+  assign tagline = section.settings.tagline | default: 'Find the ideal gift for your loved ones.'
+  assign yellow_btn_text = section.settings.yellow_button_text | default: 'CHOOSE GIFT'
+  assign yellow_btn_link = section.settings.yellow_button_link | default: '#'
+  assign heading = section.settings.heading | default: 'The Gift Guide'
+  assign description = section.settings.description | default: 'Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gift to delight your loved ones this holiday season.'
+  assign black_btn_text = section.settings.black_button_text | default: 'SHOP NOW'
+  assign black_btn_link = section.settings.black_button_link | default: '#'
+  assign footer_text = section.settings.footer_text | default: 'SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 9XL'
+-%}
+
 <section class="custom-banner-section">
   <!-- Top Navigation Bar -->
   <div class="cb-top-bar">
     <div class="cb-top-left">
-      <span class="cb-logo">{{ section.settings.logo_text }}</span>
+      <span class="cb-logo">{{ logo_text }}</span>
     </div>
     <div class="cb-top-center">
-      <span class="cb-tagline">{{ section.settings.tagline }}</span>
+      <span class="cb-tagline">{{ tagline }}</span>
     </div>
     <div class="cb-top-right">
-      {% if section.settings.yellow_button_text != blank %}
-        <a href="{{ section.settings.yellow_button_link | default: '#' }}" class="cb-yellow-btn">
-          {{ section.settings.yellow_button_text }} <span>→</span>
-        </a>
-      {% endif %}
+      <a href="{{ yellow_btn_link }}" class="cb-yellow-btn">
+        {{ yellow_btn_text }} <span>→</span>
+      </a>
     </div>
   </div>
 
@@ -22,28 +34,24 @@
   <div class="cb-main-area">
     {% if section.settings.bg_image != blank %}
     <div class="cb-illustration">
-      <img src="{{ section.settings.bg_image | img_url: 'master' }}" alt="banner background">
+      {{ section.settings.bg_image | image_url: width: 2000 | image_tag: alt: section.settings.bg_image.alt, class: 'bg-image-el', loading: 'lazy' }}
     </div>
     {% endif %}
     
     <div class="cb-content">
-      <h1 class="cb-heading">{{ section.settings.heading }}</h1>
-      <p class="cb-description">{{ section.settings.description }}</p>
+      <h1 class="cb-heading">{{ heading }}</h1>
+      <p class="cb-description">{{ description }}</p>
       
-      {% if section.settings.black_button_text != blank %}
-        <a href="{{ section.settings.black_button_link | default: '#' }}" class="cb-black-btn">
-          {{ section.settings.black_button_text }} <span>→</span>
-        </a>
-      {% endif %}
+      <a href="{{ black_btn_link }}" class="cb-black-btn">
+        {{ black_btn_text }} <span>→</span>
+      </a>
     </div>
   </div>
 
   <!-- Footer Banner -->
-  {% if section.settings.footer_text != blank %}
   <div class="cb-footer">
-    <p>{{ section.settings.footer_text }}</p>
+    <p>{{ footer_text }}</p>
   </div>
-  {% endif %}
 </section>
 
 <style>
@@ -129,10 +137,9 @@
   .cb-main-area {
     position: relative;
     width: 100%;
-    min-height: 500px;
     display: flex;
     align-items: center;
-    padding: 60px 5%;
+    padding: 80px 5%;
     box-sizing: border-box;
     overflow: hidden;
     background: #fff;
@@ -149,19 +156,20 @@
     z-index: 1;
   }
 
-  .cb-illustration img {
+  .bg-image-el {
     width: 100%;
     height: 100%;
-    object-fit: contain;
-    object-position: right top;
+    object-fit: cover;
+    object-position: right center;
   }
 
   .cb-content {
     position: relative;
     z-index: 2;
     max-width: 480px;
-    background: linear-gradient(90deg, rgba(255,255,255,1) 60%, rgba(255,255,255,0) 100%);
-    padding: 20px 20px 20px 0;
+    background: linear-gradient(90deg, rgba(255,255,255,0.95) 40%, rgba(255,255,255,0.7) 70%, rgba(255,255,255,0) 100%);
+    padding: 30px 40px 30px 0;
+    border-radius: 8px;
   }
 
   .cb-heading {
@@ -231,8 +239,7 @@
       padding: 20px;
     }
     .cb-main-area {
-      padding: 40px 5%;
-      min-height: auto;
+      padding: 50px 5%;
     }
     .cb-content {
       padding: 20px;
