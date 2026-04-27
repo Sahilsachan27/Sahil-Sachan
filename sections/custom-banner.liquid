@@ -111,6 +111,9 @@
     height: auto !important;
     max-height: 50px !important;
     background: transparent !important;
+    /* CRITICAL: Dawn calculates insane line-height from --font-body-scale */
+    line-height: 1.2 !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif !important;
   }
 
   .cb-tagline {
@@ -122,6 +125,9 @@
     height: auto !important;
     max-height: 50px !important;
     background: transparent !important;
+    /* CRITICAL: Dawn calculates insane line-height from --font-body-scale */
+    line-height: 1.4 !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif !important;
   }
 
   /* Yellow button — CHOOSE GIFT
@@ -183,9 +189,10 @@
     width: 100% !important;
     /* ── TOP BAND HEIGHT: 50% of hero ── */
     /* Change to 40% or 60% to shift the split point */
-    height: 50% !important;
-    max-height: 50% !important;
-    min-height: 50% !important;
+    /* ── TOP BAND = 45% of hero (matches Figma proportions) ── */
+    height: 45% !important;
+    max-height: 45% !important;
+    min-height: 45% !important;
     position: relative !important;
     overflow: hidden !important;
     display: block !important;
@@ -203,7 +210,8 @@
     object-fit: cover !important;
     /* ── object-position: which part of the image to show ── */
     /* "center center" / "left top" / "right bottom" / "50% 30%" etc. */
-    object-position: center center !important;
+    /* Set to "center top" so cameras/sunglasses show from the top edge */
+    object-position: center top !important;
     display: block !important;
     max-width: none !important;
     border: none !important;
@@ -217,9 +225,10 @@
     width: 100% !important;
     /* ── BOTTOM BAND HEIGHT: 50% of hero ── */
     /* Change to 60% (if top is 40%) to give more space for text */
-    height: 50% !important;
-    max-height: 50% !important;
-    min-height: 50% !important;
+    /* ── BOTTOM BAND = 55% of hero (more space for text overlay) ── */
+    height: 55% !important;
+    max-height: 55% !important;
+    min-height: 55% !important;
     position: relative !important;
     overflow: hidden !important;
     display: block !important;
@@ -233,7 +242,8 @@
     width: 100% !important;
     height: 100% !important;
     object-fit: cover !important;
-    object-position: center center !important;
+    /* Set to "center top" so watches/bowties show from top edge */
+    object-position: center top !important;
     display: block !important;
     max-width: none !important;
     border: none !important;
