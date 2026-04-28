@@ -1,36 +1,4 @@
-{% comment %}
-  ============================================================
-  CUSTOM BANNER SECTION
-  ============================================================
-  Layout: Nav (50px) + Top Image (245px) + Bottom Image (245px) + Footer (40px) = 580px
-  
-  HOW TO ADJUST:
-  ── Banner total height ──
-  Change .cb-hero height (currently 490px) and the two band heights (.cb-top, .cb-bot = 245px each).
-  
-  ── Move images left/right ──
-  Change object-position on .cb-top img or .cb-bot img.
-  Values: "left center", "center center", "right center", "20% center", etc.
-  
-  ── Move images up/down ──
-  Change object-position on .cb-top img or .cb-bot img.
-  Values: "center top", "center center", "center bottom", "center 30%", etc.
-  
-  ── Resize images (zoom in/out) ──
-  Change object-fit on .cb-top img or .cb-bot img.
-  "cover" = fill container (may crop). "contain" = show full image (may letterbox).
-  
-  ── Move text left/right ──
-  Change left on .cb-text. Currently 40px. Set to 80px to push right, 20px to push left.
-  
-  ── Move text up/down ──
-  Change top on .cb-text. Currently 50%. Set to 30% for higher, 70% for lower.
-  
-  ── Make banner full screen width ──
-  Already set. If it's not full width, Dawn is constraining it.
-  The fix is on .cb-section-reset which sets width:100vw and negative margins.
-  ============================================================
-{% endcomment %}
+
 
 {%- liquid
   assign logo_text   = section.settings.logo_text           | default: 'TISSO VISON'
@@ -45,12 +13,7 @@
 -%}
 
 <style>
-  /* ============================================================
-     DAWN THEME OVERRIDE
-     Dawn wraps every section in #shopify-section-{{ section.id }}.
-     It applies CSS variables (--color-background, etc.) that can
-     cause black/yellow backgrounds. We override ALL of them here.
-     ============================================================ */
+ 
   #shopify-section-{{ section.id }} {
     --color-background: 255, 255, 255 !important;
     --gradient-background: #ffffff !important;
@@ -62,17 +25,12 @@
     margin: 0 !important;
   }
 
-  /* ============================================================
-     FULL-WIDTH RESET
-     Dawn puts sections inside a max-width container. This breaks
-     out of that container so the banner spans the full viewport.
-     ============================================================ */
+ 
   .cb-section-reset {
     width: 100vw !important;
     max-width: 100vw !important;
     margin-left: calc(-50vw + 50%) !important;
-    /* ── Side compression: 4% padding on left+right to match Figma inset ── */
-    /* Increase to 5% or 6% for more compression, decrease to 2% for less */
+   
     padding: 0 4% !important;
     box-sizing: border-box !important;
     overflow: hidden !important;
@@ -82,9 +40,6 @@
     z-index: 2 !important;
   }
 
-  /* ============================================================
-     NAV BAR – 50px fixed height
-     ============================================================ */
   .cb-nav {
     display: flex !important;
     align-items: center !important;
@@ -127,13 +82,11 @@
     height: auto !important;
     max-height: 50px !important;
     background: transparent !important;
-    /* CRITICAL: Dawn calculates insane line-height from --font-body-scale */
+   
     line-height: 1.4 !important;
     font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif !important;
   }
 
-  /* Yellow button — CHOOSE GIFT
-     NOTE: height/max-height are critical to prevent Dawn's 25-million-px bug */
   .cb-ybtn {
     display: inline-flex !important;
     align-items: center !important;
@@ -165,12 +118,7 @@
   .cb-ybtn::after { content: none !important; display: none !important; }
   .cb-ybtn:hover { background: #e6c000 !important; letter-spacing: 0.12em !important; }
 
-  /* ============================================================
-     HERO WRAPPER – contains two image bands
-     ── FULL VIEWPORT HEIGHT ──
-     calc(100vh - 90px) = viewport minus nav(50px) minus footer(40px)
-     ── To make shorter: replace calc(100vh - 90px) with a fixed px ──
-     ============================================================ */
+ 
   .cb-hero {
     width: 100% !important;
     height: calc(100vh - 90px) !important;
@@ -183,15 +131,9 @@
     box-sizing: border-box !important;
   }
 
-  /* ============================================================
-     TOP BAND – 245px – pure illustration, no text
-     ── Move image: change object-position below ──
-     ============================================================ */
   .cb-top {
     width: 100% !important;
-    /* ── TOP BAND HEIGHT: 50% of hero ── */
-    /* Change to 40% or 60% to shift the split point */
-    /* ── TOP BAND = 45% of hero (matches Figma proportions) ── */
+   
     height: 50% !important;
     max-height: 50% !important;
     min-height: 50% !important;
@@ -207,7 +149,7 @@
     left: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    /* contain = shows full illustration without cropping (previous working state) */
+   
     object-fit: contain !important;
     object-position: center center !important;
     display: block !important;
@@ -215,15 +157,9 @@
     border: none !important;
   }
 
-  /* ============================================================
-     BOTTOM BAND – 245px – illustration + text overlay
-     ── Move image: change object-position below ──
-     ============================================================ */
   .cb-bot {
     width: 100% !important;
-    /* ── BOTTOM BAND HEIGHT: 50% of hero ── */
-    /* Change to 60% (if top is 40%) to give more space for text */
-    /* ── BOTTOM BAND = 55% of hero (more space for text overlay) ── */
+   
     height: 50% !important;
     max-height: 50% !important;
     min-height: 50% !important;
@@ -239,9 +175,9 @@
     left: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    /* contain = shows full illustration without cropping (previous working state) */
+   
     object-fit: contain !important;
-    /* Push illustration to the right, text sits on clean left */
+   
     object-position: right center !important;
     display: block !important;
     max-width: none !important;
@@ -249,15 +185,14 @@
     z-index: 0 !important;
   }
 
-  /* White gradient overlay – makes text readable over the image */
+  
   .cb-gradient {
     position: absolute !important;
     top: 0 !important;
     left: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    /* ── Gradient: fades from white (left) to transparent (right) ── */
-    /* Adjust the percentages to control how far the white extends */
+  
     background: linear-gradient(
       to right,
       rgba(255,255,255,1.00) 0%,
@@ -269,20 +204,16 @@
     pointer-events: none !important;
   }
 
-  /* ============================================================
-     TEXT OVERLAY – heading, description, SHOP NOW button
-     ── Move left/right: change "left" below ──
-     ── Move up/down: change "top" below ──
-     ============================================================ */
+  
   .cb-text {
     position: absolute !important;
-    /* ── Vertical position: 50% = centered. Use 30% for higher, 70% for lower ── */
+   
     top: 50% !important;
-    /* ── Horizontal position: 80px from left edge (Figma match) ── */
+  
     left: 80px !important;
     transform: translateY(-50%) !important;
     z-index: 2 !important;
-    /* ── Max width of text block. Increase for wider text area ── */
+   
     max-width: 380px !important;
     background: transparent !important;
     height: auto !important;
@@ -362,9 +293,7 @@
     box-sizing: border-box !important;
   }
 
-  /* ============================================================
-     MOBILE NAV — Hamburger menu (hidden on desktop)
-     ============================================================ */
+ 
   .cb-hamburger {
     display: none !important; /* hidden on desktop */
   }
@@ -372,9 +301,6 @@
     display: none !important; /* hidden on desktop */
   }
 
-  /* ============================================================
-     RESPONSIVE – Tablet
-     ============================================================ */
   @media (max-width: 1024px) {
     .cb-text {
       left: 40px !important;
@@ -383,9 +309,7 @@
     .cb-heading { font-size: 36px !important; }
   }
 
-  /* ============================================================
-     RESPONSIVE – Mobile (≤768px)
-     ============================================================ */
+ 
   @media (max-width: 768px) {
     .cb-section-reset {
       padding: 0 !important;
