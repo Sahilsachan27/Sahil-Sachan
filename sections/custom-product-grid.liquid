@@ -128,8 +128,46 @@
 
   /* ============================================================
      PLUS BUTTON — replaces old dot button
-     White circle with + icon on each product image
+     White circle with + icon positioned ON each product
      ============================================================ */
+
+  /* ── Per-product icon positions matching Figma ── */
+  /* Product 1 (bag): on the bag */
+  .grid-item:nth-child(1) .grid-plus-btn {
+    bottom: 45% !important;
+    right: auto !important;
+    left: 50% !important;
+  }
+  /* Product 2 (tuxedo): on the chest */
+  .grid-item:nth-child(2) .grid-plus-btn {
+    bottom: 45% !important;
+    right: auto !important;
+    left: 55% !important;
+  }
+  /* Product 3 (plaid shirt): on the shoulder */
+  .grid-item:nth-child(3) .grid-plus-btn {
+    bottom: 55% !important;
+    right: auto !important;
+    left: 60% !important;
+  }
+  /* Product 4 (leather jacket): on the jacket */
+  .grid-item:nth-child(4) .grid-plus-btn {
+    bottom: 55% !important;
+    right: auto !important;
+    left: 40% !important;
+  }
+  /* Product 5 (varsity jacket): on the jacket */
+  .grid-item:nth-child(5) .grid-plus-btn {
+    bottom: 50% !important;
+    right: auto !important;
+    left: 50% !important;
+  }
+  /* Product 6 (denim jacket): on the jacket */
+  .grid-item:nth-child(6) .grid-plus-btn {
+    bottom: 50% !important;
+    right: auto !important;
+    left: 65% !important;
+  }
   .grid-plus-btn {
     position: absolute !important;
     bottom: 14px !important;
@@ -194,6 +232,7 @@
     max-width: 92vw !important;
     max-height: 90vh !important;
     overflow-y: auto !important;
+    overflow-x: hidden !important;
     z-index: 1001 !important;
     padding: 28px 28px 0 28px !important;
     box-shadow: 0 12px 48px rgba(0, 0, 0, 0.18) !important;
@@ -596,7 +635,14 @@
     const container = document.getElementById('cpgOptions');
     container.innerHTML = '';
 
-    options.forEach(function(option) {
+    // Sort: Color/non-size options first, then Size options (matches Figma order)
+    var sorted = options.slice().sort(function(a, b) {
+      var aIsSize = a.name.toLowerCase().includes('size') ? 1 : 0;
+      var bIsSize = b.name.toLowerCase().includes('size') ? 1 : 0;
+      return aIsSize - bIsSize;
+    });
+
+    sorted.forEach(function(option) {
       const group = document.createElement('div');
       group.className = 'cpg-opt-group';
 
