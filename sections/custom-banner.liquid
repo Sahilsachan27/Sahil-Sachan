@@ -207,13 +207,10 @@
     left: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    /* ── object-fit: how image fills the container ── */
-    /* "cover" = fill & crop.  "contain" = show all (zoom out) */
-    /* Using "contain" to zoom out – shows more items at smaller size (Figma match) */
-    object-fit: contain !important;
-    /* ── object-position: which part of the image to show ── */
-    /* "center center" / "left top" / "right bottom" / "50% 30%" etc. */
-    object-position: center center !important;
+    /* "cover" = fill and crop edges. Matches Figma where items bleed off edges */
+    object-fit: cover !important;
+    /* Show center-top so top items visible, bottom gets partially cut */
+    object-position: center top !important;
     display: block !important;
     max-width: none !important;
     border: none !important;
@@ -243,10 +240,10 @@
     left: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    /* "contain" = zoom out to show more items at smaller size (Figma match) */
-    object-fit: contain !important;
-    /* Image content shifted to the right side, text sits on clean left (Figma layout) */
-    object-position: right center !important;
+    /* "cover" = fill and crop. Bottom items get cut off (Figma match) */
+    object-fit: cover !important;
+    /* Show from center-top so bottom items partially disappear below edge */
+    object-position: center top !important;
     display: block !important;
     max-width: none !important;
     border: none !important;
@@ -369,27 +366,101 @@
   /* ============================================================
      RESPONSIVE – mobile adjustments
      ============================================================ */
+
+  /* Tablet */
+  @media (max-width: 1024px) {
+    .cb-text {
+      left: 40px !important;
+      max-width: 45% !important;
+    }
+    .cb-heading { font-size: 36px !important; }
+  }
+
+  /* Mobile */
   @media (max-width: 768px) {
+    .cb-section-reset {
+      padding: 0 !important;
+    }
     .cb-nav {
       flex-wrap: wrap !important;
       height: auto !important;
       max-height: none !important;
       min-height: unset !important;
-      padding: 12px 20px !important;
-      gap: 10px !important;
+      padding: 10px 16px !important;
+      gap: 8px !important;
     }
-    .cb-tagline { order: 3 !important; flex: 1 0 100% !important; padding: 0 !important; }
-    .cb-hero { height: auto !important; max-height: none !important; min-height: unset !important; }
-    .cb-top { height: 180px !important; max-height: 180px !important; min-height: 180px !important; }
-    .cb-bot { height: auto !important; max-height: none !important; min-height: 220px !important; }
+    .cb-logo { font-size: 13px !important; }
+    .cb-tagline { order: 3 !important; flex: 1 0 100% !important; padding: 0 !important; font-size: 11px !important; text-align: center !important; }
+    .cb-ybtn { font-size: 10px !important; padding: 8px 14px !important; }
+
+    .cb-hero {
+      height: auto !important;
+      max-height: none !important;
+      min-height: unset !important;
+    }
+
+    /* Top band: shorter on mobile */
+    .cb-top {
+      height: 180px !important;
+      max-height: 180px !important;
+      min-height: 180px !important;
+    }
+
+    /* Bottom band: stack text below image on mobile */
+    .cb-bot {
+      height: auto !important;
+      max-height: none !important;
+      min-height: unset !important;
+      display: flex !important;
+      flex-direction: column !important;
+    }
+    .cb-bot-img {
+      position: relative !important;
+      width: 100% !important;
+      height: 200px !important;
+      object-position: center center !important;
+    }
+
+    /* Gradient: full white on mobile for text readability */
+    .cb-gradient {
+      position: relative !important;
+      background: #fff !important;
+      height: auto !important;
+    }
+
+    /* Text: static position, full width on mobile */
     .cb-text {
       position: static !important;
       transform: none !important;
+      left: auto !important;
       padding: 24px 20px !important;
       max-width: 100% !important;
     }
-    .cb-heading { font-size: 34px !important; }
-    .cb-gradient { background: rgba(255,255,255,0.85) !important; }
+    .cb-heading { font-size: 28px !important; }
+    .cb-desc { font-size: 13px !important; }
+
+    /* Footer */
+    .cb-footer {
+      font-size: 9px !important;
+      letter-spacing: 0.08em !important;
+      padding: 0 12px !important;
+    }
+  }
+
+  /* Small phones */
+  @media (max-width: 480px) {
+    .cb-top {
+      height: 140px !important;
+      max-height: 140px !important;
+      min-height: 140px !important;
+    }
+    .cb-bot-img {
+      height: 160px !important;
+    }
+    .cb-heading { font-size: 24px !important; }
+    .cb-text { padding: 20px 16px !important; }
+    .cb-desc { font-size: 12px !important; }
+    .cb-bbtn { padding: 10px 20px !important; font-size: 11px !important; }
   }
 </style>
 
