@@ -207,8 +207,8 @@
     left: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    /* "cover" fills and crops edges — items bleed off naturally */
-    object-fit: cover !important;
+    /* contain = shows full illustration without cropping (previous working state) */
+    object-fit: contain !important;
     object-position: center center !important;
     display: block !important;
     max-width: none !important;
@@ -239,10 +239,10 @@
     left: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    /* "cover" fills and crops — bottom items partially disappear */
-    object-fit: cover !important;
-    /* Push image far right so left side is clean white for text */
-    object-position: 90% 55% !important;
+    /* contain = shows full illustration without cropping (previous working state) */
+    object-fit: contain !important;
+    /* Push illustration to the right, text sits on clean left */
+    object-position: right center !important;
     display: block !important;
     max-width: none !important;
     border: none !important;
@@ -261,10 +261,9 @@
     background: linear-gradient(
       to right,
       rgba(255,255,255,1.00) 0%,
-      rgba(255,255,255,1.00) 38%,
-      rgba(255,255,255,0.85) 48%,
-      rgba(255,255,255,0.40) 58%,
-      rgba(255,255,255,0.00) 70%
+      rgba(255,255,255,0.95) 30%,
+      rgba(255,255,255,0.70) 45%,
+      rgba(255,255,255,0.00) 60%
     ) !important;
     z-index: 1 !important;
     pointer-events: none !important;

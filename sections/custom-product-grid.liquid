@@ -29,9 +29,6 @@
   </div>
 </section>
 
-{% comment %} ═══════════════════════════════════════════
-     QUICK VIEW POPUP (Figma Design)
-     ═══════════════════════════════════════════ {% endcomment %}
 
 <div class="cpg-overlay" id="cpgOverlay" onclick="cpgClosePopup()"></div>
 
@@ -59,12 +56,7 @@
 </div>
 
 <style>
-  /* ============================================================
-     DAWN THEME OVERRIDE — CRITICAL
-     Dawn injects CSS variables that create enormous line-height
-     and min-height values. We must override them on ALL popup
-     elements to prevent the popup from stretching off-screen.
-     ============================================================ */
+ 
   .cpg-popup,
   .cpg-popup *,
   .cpg-popup h3,
@@ -87,9 +79,7 @@
     display: none !important;
   }
 
-  /* ============================================================
-     GRID LAYOUT — PRESERVED EXACTLY AS BEFORE
-     ============================================================ */
+  
   .custom-grid {
     padding: 60px 40px;
     background: #fff;
@@ -126,10 +116,7 @@
     transform: scale(1.03);
   }
 
-  /* ============================================================
-     PLUS BUTTON — replaces old dot button
-     White circle with + icon positioned ON each product
-     ============================================================ */
+  
 
   /* ── Per-product icon positions matching Figma ── */
   /* Product 1 (bag): on the bag */
@@ -318,11 +305,7 @@
     background: transparent !important;
   }
 
-  /* ============================================================
-     COLOR SELECTOR — Figma design
-     Two side-by-side boxes with colored left border stripe.
-     Selected = black background + white text.
-     ============================================================ */
+  
   .cpg-opt-group {
     margin-bottom: 20px !important;
     height: auto !important;
@@ -655,9 +638,7 @@
       const isSize = option.name.toLowerCase().includes('size');
 
       if (isSize) {
-        /* ─────────────────────────────────────────
-           CUSTOM SIZE DROPDOWN (Figma design)
-           ───────────────────────────────────────── */
+      
         const dropdown = document.createElement('div');
         dropdown.className = 'cpg-size-dropdown';
 
@@ -711,11 +692,7 @@
         group.appendChild(dropdown);
 
       } else {
-        /* ─────────────────────────────────────────
-           COLOR SELECTOR (Figma design)
-           Two boxes with colored left stripe.
-           Selected = black bg + white text.
-           ───────────────────────────────────────── */
+       
         const wrap = document.createElement('div');
         wrap.className = 'cpg-color-wrap';
 
