@@ -209,7 +209,8 @@
     height: 100% !important;
     /* "cover" fills and crops edges — items bleed off naturally */
     object-fit: cover !important;
-    object-position: center center !important;
+    /* Shifted down to match Figma — items sit lower in the band */
+    object-position: center 40% !important;
     display: block !important;
     max-width: none !important;
     border: none !important;
@@ -241,8 +242,8 @@
     height: 100% !important;
     /* "cover" fills and crops — bottom items partially disappear */
     object-fit: cover !important;
-    /* Push image to right so left side is clean for text overlay */
-    object-position: right center !important;
+    /* Shifted right + lower to match Figma — clear left space for text */
+    object-position: 75% 60% !important;
     display: block !important;
     max-width: none !important;
     border: none !important;
