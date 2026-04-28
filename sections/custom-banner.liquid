@@ -71,7 +71,9 @@
     width: 100vw !important;
     max-width: 100vw !important;
     margin-left: calc(-50vw + 50%) !important;
-    padding: 0 !important;
+    /* ── Side compression: 4% padding on left+right to match Figma inset ── */
+    /* Increase to 5% or 6% for more compression, decrease to 2% for less */
+    padding: 0 4% !important;
     box-sizing: border-box !important;
     overflow: hidden !important;
     background: #ffffff !important;
