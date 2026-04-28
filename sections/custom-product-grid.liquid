@@ -60,6 +60,34 @@
 
 <style>
   /* ============================================================
+     DAWN THEME OVERRIDE — CRITICAL
+     Dawn injects CSS variables that create enormous line-height
+     and min-height values. We must override them on ALL popup
+     elements to prevent the popup from stretching off-screen.
+     ============================================================ */
+  .cpg-popup,
+  .cpg-popup *,
+  .cpg-popup h3,
+  .cpg-popup p,
+  .cpg-popup button,
+  .cpg-popup span,
+  .cpg-popup div,
+  .cpg-popup select,
+  .cpg-popup img {
+    line-height: normal !important;
+    min-height: unset !important;
+    max-height: none !important;
+    box-sizing: border-box !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif !important;
+  }
+
+  .cpg-popup button::before,
+  .cpg-popup button::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  /* ============================================================
      GRID LAYOUT — PRESERVED EXACTLY AS BEFORE
      ============================================================ */
   .custom-grid {
@@ -103,30 +131,39 @@
      White circle with + icon on each product image
      ============================================================ */
   .grid-plus-btn {
-    position: absolute;
-    bottom: 14px;
-    right: 14px;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.92);
-    border: 1.5px solid rgba(0, 0, 0, 0.15);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.25s ease;
-    z-index: 2;
-    color: #333;
-    padding: 0;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    position: absolute !important;
+    bottom: 14px !important;
+    right: 14px !important;
+    width: 30px !important;
+    height: 30px !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.92) !important;
+    border: 1.5px solid rgba(0, 0, 0, 0.15) !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.25s ease !important;
+    z-index: 2 !important;
+    color: #333 !important;
+    padding: 0 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
+    min-width: unset !important;
+    min-height: unset !important;
+    line-height: 1 !important;
+  }
+
+  .grid-plus-btn::before,
+  .grid-plus-btn::after {
+    content: none !important;
+    display: none !important;
   }
 
   .grid-plus-btn:hover {
-    background: #000;
-    color: #fff;
-    border-color: #000;
-    transform: scale(1.1);
+    background: #000 !important;
+    color: #fff !important;
+    border-color: #000 !important;
+    transform: scale(1.1) !important;
   }
 
   /* ============================================================
@@ -143,82 +180,103 @@
 
   /* ============================================================
      POPUP BOX — matches Figma layout
+     All values use !important to override Dawn theme CSS variables
      ============================================================ */
   .cpg-popup {
     display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: #fff;
-    width: 400px;
-    max-width: 92vw;
-    max-height: 90vh;
-    overflow-y: auto;
-    z-index: 1001;
-    padding: 28px 28px 0 28px;
-    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.18);
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    background: #fff !important;
+    background-color: #fff !important;
+    width: 400px !important;
+    max-width: 92vw !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+    z-index: 1001 !important;
+    padding: 28px 28px 0 28px !important;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.18) !important;
+    color: #000 !important;
   }
 
   .cpg-close {
-    position: absolute;
-    top: 14px;
-    right: 18px;
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-    color: #000;
-    z-index: 2;
-    padding: 4px;
-    line-height: 1;
+    position: absolute !important;
+    top: 14px !important;
+    right: 18px !important;
+    background: none !important;
+    background-color: transparent !important;
+    border: none !important;
+    font-size: 18px !important;
+    cursor: pointer !important;
+    color: #000 !important;
+    z-index: 2 !important;
+    padding: 4px !important;
+    line-height: 1 !important;
+    height: auto !important;
+    width: auto !important;
+    min-width: unset !important;
   }
 
   .cpg-close:hover {
-    opacity: 0.5;
+    opacity: 0.5 !important;
   }
 
   /* ── Top section: image + info side by side ── */
   .cpg-top {
-    display: flex;
-    gap: 16px;
-    margin-bottom: 24px;
-    padding-right: 20px;
+    display: flex !important;
+    gap: 16px !important;
+    margin-bottom: 24px !important;
+    padding-right: 20px !important;
+    height: auto !important;
   }
 
   .cpg-top img {
-    width: 120px;
-    height: 140px;
-    object-fit: cover;
-    flex-shrink: 0;
+    width: 120px !important;
+    height: 140px !important;
+    object-fit: cover !important;
+    flex-shrink: 0 !important;
+    border: none !important;
   }
 
   .cpg-info {
-    flex: 1;
-    min-width: 0;
+    flex: 1 !important;
+    min-width: 0 !important;
+    height: auto !important;
   }
 
   .cpg-info h3 {
-    font-size: 16px;
-    font-weight: 500;
-    font-style: italic;
-    margin: 0 0 8px 0;
-    color: #000;
-    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    font-style: italic !important;
+    margin: 0 0 8px 0 !important;
+    padding: 0 !important;
+    color: #000 !important;
+    font-family: Georgia, 'Times New Roman', serif !important;
+    line-height: 1.3 !important;
+    height: auto !important;
+    background: transparent !important;
   }
 
   .cpg-price {
-    font-size: 18px;
-    font-weight: 700;
-    margin: 0 0 10px 0;
-    color: #000;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    margin: 0 0 10px 0 !important;
+    padding: 0 !important;
+    color: #000 !important;
+    line-height: 1.3 !important;
+    height: auto !important;
+    background: transparent !important;
   }
 
   .cpg-desc {
-    font-size: 12px;
-    color: #555;
-    line-height: 1.55;
-    margin: 0;
+    font-size: 12px !important;
+    color: #555 !important;
+    line-height: 1.55 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    background: transparent !important;
   }
 
   /* ============================================================
@@ -227,173 +285,199 @@
      Selected = black background + white text.
      ============================================================ */
   .cpg-opt-group {
-    margin-bottom: 20px;
+    margin-bottom: 20px !important;
+    height: auto !important;
   }
 
   .cpg-opt-label {
-    font-size: 13px;
-    font-weight: 400;
-    color: #000;
-    margin: 0 0 8px 0;
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    color: #000 !important;
+    margin: 0 0 8px 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    background: transparent !important;
+    line-height: 1.4 !important;
   }
 
   .cpg-color-wrap {
-    display: flex;
-    border: 1px solid #000;
-    overflow: hidden;
+    display: flex !important;
+    border: 1px solid #000 !important;
+    overflow: hidden !important;
+    height: auto !important;
   }
 
   .cpg-color-btn {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    padding: 12px 16px;
-    background: #fff;
-    border: none;
-    border-right: 1px solid #ccc;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 400;
-    color: #000;
-    position: relative;
-    transition: background 0.2s ease, color 0.2s ease;
-    text-align: left;
-    min-height: 44px;
+    flex: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 12px 16px !important;
+    background: #fff !important;
+    background-color: #fff !important;
+    border: none !important;
+    border-right: 1px solid #ccc !important;
+    cursor: pointer !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    color: #000 !important;
+    position: relative !important;
+    transition: background 0.2s ease, color 0.2s ease !important;
+    text-align: left !important;
+    height: 44px !important;
+    line-height: 1.2 !important;
+    min-width: unset !important;
   }
 
   .cpg-color-btn:last-child {
-    border-right: none;
+    border-right: none !important;
   }
 
-  /* Colored stripe on the left edge of each color option */
   .cpg-color-stripe {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 5px;
-    height: 100%;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 5px !important;
+    height: 100% !important;
   }
 
   .cpg-color-btn-text {
-    margin-left: 12px;
+    margin-left: 12px !important;
+    line-height: 1.2 !important;
+    height: auto !important;
   }
 
-  /* Selected color: black background, white text */
   .cpg-color-btn.active {
-    background: #000;
-    color: #fff;
+    background: #000 !important;
+    background-color: #000 !important;
+    color: #fff !important;
   }
 
-  /* ============================================================
-     SIZE DROPDOWN — Figma design
-     Custom dropdown with "Choose your size" + chevron.
-     Expands to show XS, S, M, L, XL options.
-     ============================================================ */
+  /* ── Size Dropdown ── */
   .cpg-size-dropdown {
-    position: relative;
+    position: relative !important;
+    height: auto !important;
   }
 
   .cpg-size-toggle {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 16px;
-    background: #fff;
-    border: 1px solid #000;
-    cursor: pointer;
-    font-size: 14px;
-    color: #000;
-    box-sizing: border-box;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 12px 16px !important;
+    background: #fff !important;
+    background-color: #fff !important;
+    border: 1px solid #000 !important;
+    cursor: pointer !important;
+    font-size: 14px !important;
+    color: #000 !important;
+    box-sizing: border-box !important;
+    height: auto !important;
+    line-height: 1.2 !important;
+    min-width: unset !important;
   }
 
   .cpg-size-toggle:hover {
-    background: #fafafa;
+    background: #fafafa !important;
   }
 
   .cpg-chevron {
-    font-size: 14px;
-    transition: transform 0.25s ease;
-    user-select: none;
+    font-size: 14px !important;
+    transition: transform 0.25s ease !important;
+    user-select: none !important;
+    line-height: 1 !important;
+    height: auto !important;
   }
 
   .cpg-size-toggle.open .cpg-chevron {
-    transform: rotate(180deg);
+    transform: rotate(180deg) !important;
   }
 
   .cpg-size-list {
     display: none;
-    border: 1px solid #000;
-    border-top: none;
-    background: #fff;
-    max-height: 220px;
-    overflow-y: auto;
+    border: 1px solid #000 !important;
+    border-top: none !important;
+    background: #fff !important;
+    max-height: 220px !important;
+    overflow-y: auto !important;
   }
 
   .cpg-size-list.open {
-    display: block;
+    display: block !important;
   }
 
   .cpg-size-option {
-    width: 100%;
-    padding: 12px 16px;
-    background: #fff;
-    border: none;
-    border-bottom: 1px solid #eee;
-    cursor: pointer;
-    font-size: 14px;
-    text-align: center;
-    color: #000;
-    transition: background 0.15s ease;
-    box-sizing: border-box;
+    width: 100% !important;
+    padding: 12px 16px !important;
+    background: #fff !important;
+    background-color: #fff !important;
+    border: none !important;
+    border-bottom: 1px solid #eee !important;
+    cursor: pointer !important;
+    font-size: 14px !important;
+    text-align: center !important;
+    color: #000 !important;
+    transition: background 0.15s ease !important;
+    box-sizing: border-box !important;
+    height: auto !important;
+    line-height: 1.2 !important;
+    min-width: unset !important;
   }
 
   .cpg-size-option:last-child {
-    border-bottom: none;
+    border-bottom: none !important;
   }
 
   .cpg-size-option:hover {
-    background: #f5f5f5;
+    background: #f5f5f5 !important;
   }
 
   .cpg-size-option.active {
-    background: #000;
-    color: #fff;
+    background: #000 !important;
+    background-color: #000 !important;
+    color: #fff !important;
   }
 
-  /* ============================================================
-     ADD TO CART BUTTON — Frontend only
-     ============================================================ */
+  /* ── Add to Cart Button ── */
   .cpg-atc {
-    width: calc(100% + 56px);
-    margin-left: -28px;
-    margin-top: 24px;
-    padding: 18px 28px;
-    background: #000;
-    color: #fff;
-    border: none;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    transition: background 0.3s ease;
+    width: calc(100% + 56px) !important;
+    margin-left: -28px !important;
+    margin-top: 24px !important;
+    padding: 18px 28px !important;
+    background: #000 !important;
+    background-color: #000 !important;
+    color: #fff !important;
+    border: none !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    letter-spacing: 2px !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 12px !important;
+    transition: background 0.3s ease !important;
+    height: auto !important;
+    line-height: 1.2 !important;
+    min-width: unset !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
   }
 
   .cpg-atc:hover {
-    background: #333;
+    background: #333 !important;
+    background-color: #333 !important;
   }
 
   .cpg-atc.added {
-    background: #2d7a3e;
+    background: #2d7a3e !important;
+    background-color: #2d7a3e !important;
   }
 
   .cpg-atc-arrow {
-    font-size: 18px;
-    font-weight: 300;
+    font-size: 18px !important;
+    font-weight: 300 !important;
+    line-height: 1 !important;
+    height: auto !important;
   }
 
   /* ============================================================
