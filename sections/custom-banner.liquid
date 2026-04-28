@@ -264,9 +264,10 @@
     /* Adjust the percentages to control how far the white extends */
     background: linear-gradient(
       to right,
-      rgba(255,255,255,0.96) 0%,
-      rgba(255,255,255,0.80) 25%,
-      rgba(255,255,255,0.00) 55%
+      rgba(255,255,255,1.00) 0%,
+      rgba(255,255,255,0.95) 30%,
+      rgba(255,255,255,0.70) 45%,
+      rgba(255,255,255,0.00) 60%
     ) !important;
     z-index: 1 !important;
     pointer-events: none !important;
@@ -281,8 +282,8 @@
     position: absolute !important;
     /* ── Vertical position: 50% = centered. Use 30% for higher, 70% for lower ── */
     top: 50% !important;
-    /* ── Horizontal position: 40px from left edge ── */
-    left: 40px !important;
+    /* ── Horizontal position: 80px from left edge (Figma match) ── */
+    left: 80px !important;
     transform: translateY(-50%) !important;
     z-index: 2 !important;
     /* ── Max width of text block. Increase for wider text area ── */
