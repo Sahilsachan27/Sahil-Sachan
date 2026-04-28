@@ -207,10 +207,9 @@
     left: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    /* "cover" = fill and crop edges. Matches Figma where items bleed off edges */
+    /* "cover" fills and crops edges — items bleed off naturally */
     object-fit: cover !important;
-    /* Show center-top so top items visible, bottom gets partially cut */
-    object-position: center top !important;
+    object-position: center center !important;
     display: block !important;
     max-width: none !important;
     border: none !important;
@@ -240,10 +239,10 @@
     left: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    /* "cover" = fill and crop. Bottom items get cut off (Figma match) */
+    /* "cover" fills and crops — bottom items partially disappear */
     object-fit: cover !important;
-    /* Show from center-top so bottom items partially disappear below edge */
-    object-position: center top !important;
+    /* Push image to right so left side is clean for text overlay */
+    object-position: right center !important;
     display: block !important;
     max-width: none !important;
     border: none !important;
@@ -364,10 +363,18 @@
   }
 
   /* ============================================================
-     RESPONSIVE – mobile adjustments
+     MOBILE NAV — Hamburger menu (hidden on desktop)
      ============================================================ */
+  .cb-hamburger {
+    display: none !important; /* hidden on desktop */
+  }
+  .cb-mobile-panel {
+    display: none !important; /* hidden on desktop */
+  }
 
-  /* Tablet */
+  /* ============================================================
+     RESPONSIVE – Tablet
+     ============================================================ */
   @media (max-width: 1024px) {
     .cb-text {
       left: 40px !important;
@@ -376,91 +383,173 @@
     .cb-heading { font-size: 36px !important; }
   }
 
-  /* Mobile */
+  /* ============================================================
+     RESPONSIVE – Mobile (≤768px)
+     ============================================================ */
   @media (max-width: 768px) {
     .cb-section-reset {
       padding: 0 !important;
     }
-    .cb-nav {
-      flex-wrap: wrap !important;
-      height: auto !important;
-      max-height: none !important;
-      min-height: unset !important;
-      padding: 10px 16px !important;
-      gap: 8px !important;
-    }
-    .cb-logo { font-size: 13px !important; }
-    .cb-tagline { order: 3 !important; flex: 1 0 100% !important; padding: 0 !important; font-size: 11px !important; text-align: center !important; }
-    .cb-ybtn { font-size: 10px !important; padding: 8px 14px !important; }
 
+    /* --- Desktop nav hidden on mobile --- */
+    .cb-tagline { display: none !important; }
+    .cb-ybtn { display: none !important; }
+
+    .cb-nav {
+      height: 50px !important;
+      max-height: 50px !important;
+      min-height: 50px !important;
+      padding: 0 16px !important;
+      justify-content: center !important;
+      position: relative !important;
+    }
+    .cb-logo {
+      text-align: center !important;
+      font-size: 16px !important;
+    }
+
+    /* --- Hamburger icon visible on mobile --- */
+    .cb-hamburger {
+      display: flex !important;
+      position: absolute !important;
+      left: 16px !important;
+      top: 50% !important;
+      transform: translateY(-50%) !important;
+      background: none !important;
+      background-color: transparent !important;
+      border: none !important;
+      cursor: pointer !important;
+      font-size: 22px !important;
+      color: #000 !important;
+      padding: 4px !important;
+      width: auto !important;
+      height: auto !important;
+      min-width: unset !important;
+      min-height: unset !important;
+      line-height: 1 !important;
+      z-index: 5 !important;
+    }
+    .cb-hamburger::before,
+    .cb-hamburger::after { content: none !important; display: none !important; }
+
+    /* --- Mobile slide-down panel --- */
+    .cb-mobile-panel {
+      display: none;
+      flex-direction: column !important;
+      align-items: center !important;
+      padding: 20px 24px 24px !important;
+      background: #fff !important;
+      border-bottom: 1px solid #e8e8e8 !important;
+      gap: 16px !important;
+    }
+    .cb-mobile-panel.open {
+      display: flex !important;
+    }
+    .cb-mobile-tagline {
+      font-size: 14px !important;
+      color: #333 !important;
+      text-align: center !important;
+      line-height: 1.5 !important;
+      height: auto !important;
+      background: transparent !important;
+    }
+    .cb-mobile-ybtn {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      background: #e8d44d !important;
+      background-color: #e8d44d !important;
+      color: #000 !important;
+      padding: 14px 40px !important;
+      font-size: 14px !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.08em !important;
+      text-transform: uppercase !important;
+      text-decoration: none !important;
+      border: none !important;
+      height: auto !important;
+      min-height: unset !important;
+      min-width: unset !important;
+      line-height: 1.2 !important;
+    }
+    .cb-mobile-ybtn::before,
+    .cb-mobile-ybtn::after { content: none !important; display: none !important; }
+
+    /* --- Hero: auto height on mobile --- */
     .cb-hero {
       height: auto !important;
       max-height: none !important;
       min-height: unset !important;
     }
 
-    /* Top band: shorter on mobile */
+    /* --- Top band: hide on mobile (Figma mobile has no top image) --- */
     .cb-top {
-      height: 180px !important;
-      max-height: 180px !important;
-      min-height: 180px !important;
+      display: none !important;
     }
 
-    /* Bottom band: stack text below image on mobile */
+    /* --- Bottom band: full layout on mobile --- */
     .cb-bot {
       height: auto !important;
       max-height: none !important;
       min-height: unset !important;
-      display: flex !important;
-      flex-direction: column !important;
     }
+
+    /* Text section: centered, above image on mobile */
+    .cb-text {
+      position: relative !important;
+      transform: none !important;
+      left: auto !important;
+      top: auto !important;
+      padding: 30px 24px 20px !important;
+      max-width: 100% !important;
+      text-align: center !important;
+      z-index: 2 !important;
+      background: #fff !important;
+    }
+    .cb-heading {
+      font-size: 32px !important;
+      text-align: center !important;
+    }
+    .cb-desc {
+      font-size: 14px !important;
+      text-align: center !important;
+    }
+    .cb-bbtn {
+      margin: 0 auto !important;
+    }
+
+    /* Gradient: hide on mobile since text is on white bg above image */
+    .cb-gradient {
+      display: none !important;
+    }
+
+    /* Bottom image: show below text, partially visible */
     .cb-bot-img {
       position: relative !important;
       width: 100% !important;
-      height: 200px !important;
+      height: 250px !important;
       object-position: center center !important;
     }
-
-    /* Gradient: full white on mobile for text readability */
-    .cb-gradient {
-      position: relative !important;
-      background: #fff !important;
-      height: auto !important;
-    }
-
-    /* Text: static position, full width on mobile */
-    .cb-text {
-      position: static !important;
-      transform: none !important;
-      left: auto !important;
-      padding: 24px 20px !important;
-      max-width: 100% !important;
-    }
-    .cb-heading { font-size: 28px !important; }
-    .cb-desc { font-size: 13px !important; }
 
     /* Footer */
     .cb-footer {
       font-size: 9px !important;
-      letter-spacing: 0.08em !important;
+      letter-spacing: 0.06em !important;
       padding: 0 12px !important;
     }
   }
 
-  /* Small phones */
+  /* ============================================================
+     RESPONSIVE – Small phones (≤480px)
+     ============================================================ */
   @media (max-width: 480px) {
-    .cb-top {
-      height: 140px !important;
-      max-height: 140px !important;
-      min-height: 140px !important;
-    }
     .cb-bot-img {
-      height: 160px !important;
+      height: 200px !important;
     }
-    .cb-heading { font-size: 24px !important; }
-    .cb-text { padding: 20px 16px !important; }
-    .cb-desc { font-size: 12px !important; }
-    .cb-bbtn { padding: 10px 20px !important; font-size: 11px !important; }
+    .cb-heading { font-size: 26px !important; }
+    .cb-desc { font-size: 13px !important; }
+    .cb-text { padding: 24px 20px 16px !important; }
+    .cb-bbtn { padding: 10px 22px !important; font-size: 11px !important; }
   }
 </style>
 
@@ -471,9 +560,16 @@
 
   <!-- NAV BAR -->
   <div class="cb-nav">
+    <button class="cb-hamburger" onclick="document.querySelector('.cb-mobile-panel').classList.toggle('open'); var ic = this.querySelector('.cb-hamburger-icon'); ic.textContent = ic.textContent === '✕' ? '☰' : '✕';" aria-label="Menu"><span class="cb-hamburger-icon">☰</span></button>
     <span class="cb-logo">{{ logo_text }}</span>
     <span class="cb-tagline">{{ tagline }}</span>
     <a href="{{ y_btn_link }}" class="cb-ybtn">{{ y_btn_text }}&nbsp;&nbsp;&#8594;</a>
+  </div>
+
+  <!-- MOBILE SLIDE-DOWN PANEL (hidden on desktop) -->
+  <div class="cb-mobile-panel">
+    <span class="cb-mobile-tagline">{{ tagline }}</span>
+    <a href="{{ y_btn_link }}" class="cb-mobile-ybtn">{{ y_btn_text }}&nbsp;&nbsp;&#10230;</a>
   </div>
 
   <!-- HERO: two stacked image bands -->
