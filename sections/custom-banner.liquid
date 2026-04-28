@@ -206,12 +206,12 @@
     width: 100% !important;
     height: 100% !important;
     /* ── object-fit: how image fills the container ── */
-    /* "cover" = fill & crop.  "contain" = show all, may letterbox */
-    object-fit: cover !important;
+    /* "cover" = fill & crop.  "contain" = show all (zoom out) */
+    /* Using "contain" to zoom out – shows more items at smaller size (Figma match) */
+    object-fit: contain !important;
     /* ── object-position: which part of the image to show ── */
     /* "center center" / "left top" / "right bottom" / "50% 30%" etc. */
-    /* Set to "center top" so cameras/sunglasses show from the top edge */
-    object-position: center top !important;
+    object-position: center center !important;
     display: block !important;
     max-width: none !important;
     border: none !important;
@@ -241,9 +241,10 @@
     left: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    object-fit: cover !important;
-    /* Set to "right top" so image content shifts to the right side (Figma layout) */
-    object-position: right top !important;
+    /* "contain" = zoom out to show more items at smaller size (Figma match) */
+    object-fit: contain !important;
+    /* Image content shifted to the right side, text sits on clean left (Figma layout) */
+    object-position: right center !important;
     display: block !important;
     max-width: none !important;
     border: none !important;
