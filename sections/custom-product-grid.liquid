@@ -8,45 +8,60 @@
       {% assign product = all_products[block.settings.product] %}
       <div class="grid-item" {{ block.shopify_attributes }}>
         <img src="{{ product.featured_image | img_url: 'master' }}" alt="{{ product.title }}">
-        <button 
-          class="grid-dot-btn"
+        <button
+          class="grid-plus-btn"
           data-product-id="{{ product.id }}"
           data-product-title="{{ product.title }}"
           data-product-price="{{ product.price | money }}"
-          data-product-description="{{ product.description | strip_html }}"
-          data-product-image="{{ product.featured_image | img_url: 'master' }}"
+          data-product-description="{{ product.description | strip_html | truncate: 120 }}"
+          data-product-image="{{ product.featured_image | img_url: 'large' }}"
           data-product-variants="{{ product.variants | json | escape }}"
           data-product-options="{{ product.options_with_values | json | escape }}"
-          onclick="openPopup(this)"
-        >●</button>
+          onclick="cpgOpenPopup(this)"
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="6" y1="0" x2="6" y2="12" stroke="currentColor" stroke-width="1.5"/>
+            <line x1="0" y1="6" x2="12" y2="6" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+        </button>
       </div>
     {% endfor %}
   </div>
 </section>
 
-{% comment %} Popup {% endcomment %}
-<div class="popup-overlay" id="popupOverlay" onclick="closePopup()"></div>
+{% comment %} ═══════════════════════════════════════════
+     QUICK VIEW POPUP (Figma Design)
+     ═══════════════════════════════════════════ {% endcomment %}
 
-<div class="popup-box" id="popupBox">
-  <button class="popup-close" onclick="closePopup()">✕</button>
-  <div class="popup-inner">
-    <img id="popupImage" src="" alt="">
-    <div class="popup-details">
-      <h3 id="popupTitle"></h3>
-      <p id="popupPrice"></p>
-      <p id="popupDescription"></p>
+<div class="cpg-overlay" id="cpgOverlay" onclick="cpgClosePopup()"></div>
 
-      <div id="popupOptions"></div>
+<div class="cpg-popup" id="cpgPopup">
+  <button class="cpg-close" onclick="cpgClosePopup()">✕</button>
 
-      <button class="add-to-cart-btn" onclick="addToCart()">
-        ADD TO CART →
-      </button>
+  <!-- Top: Image + Product Info -->
+  <div class="cpg-top">
+    <img id="cpgImage" src="" alt="">
+    <div class="cpg-info">
+      <h3 id="cpgTitle"></h3>
+      <p id="cpgPrice" class="cpg-price"></p>
+      <p id="cpgDesc" class="cpg-desc"></p>
     </div>
   </div>
+
+  <!-- Dynamic Options (Color / Size) -->
+  <div id="cpgOptions"></div>
+
+  <!-- Add to Cart (Frontend Only) -->
+  <button class="cpg-atc" id="cpgAtcBtn" onclick="cpgAddToCart()">
+    <span class="cpg-atc-text">ADD TO CART</span>
+    <span class="cpg-atc-arrow">→</span>
+  </button>
 </div>
 
 <style>
-  /* Grid Section */
+  /* ============================================================
+     GRID LAYOUT — PRESERVED EXACTLY AS BEFORE
+     ============================================================ */
   .custom-grid {
     padding: 60px 40px;
     background: #fff;
@@ -83,143 +98,277 @@
     transform: scale(1.03);
   }
 
-  .grid-dot-btn {
+  /* ============================================================
+     PLUS BUTTON — replaces old dot button
+     White circle with + icon on each product image
+     ============================================================ */
+  .grid-plus-btn {
     position: absolute;
-    bottom: 12px;
-    right: 12px;
-    width: 28px;
-    height: 28px;
+    bottom: 14px;
+    right: 14px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
-    background: #fff;
-    border: 2px solid #000;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1.5px solid rgba(0, 0, 0, 0.15);
     cursor: pointer;
-    font-size: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
+    transition: all 0.25s ease;
     z-index: 2;
+    color: #333;
+    padding: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
   }
 
-  .grid-dot-btn:hover {
+  .grid-plus-btn:hover {
     background: #000;
     color: #fff;
+    border-color: #000;
+    transform: scale(1.1);
   }
 
-  /* Popup Overlay */
-  .popup-overlay {
+  /* ============================================================
+     POPUP OVERLAY
+     ============================================================ */
+  .cpg-overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.5);
-    z-index: 100;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+    backdrop-filter: blur(2px);
   }
 
-  /* Popup Box */
-  .popup-box {
+  /* ============================================================
+     POPUP BOX — matches Figma layout
+     ============================================================ */
+  .cpg-popup {
     display: none;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     background: #fff;
-    width: 500px;
-    max-width: 95vw;
-    z-index: 101;
-    padding: 24px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    width: 400px;
+    max-width: 92vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    z-index: 1001;
+    padding: 28px 28px 0 28px;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.18);
   }
 
-  .popup-close {
+  .cpg-close {
     position: absolute;
-    top: 12px;
-    right: 16px;
+    top: 14px;
+    right: 18px;
     background: none;
     border: none;
     font-size: 18px;
     cursor: pointer;
+    color: #000;
+    z-index: 2;
+    padding: 4px;
+    line-height: 1;
   }
 
-  .popup-inner {
+  .cpg-close:hover {
+    opacity: 0.5;
+  }
+
+  /* ── Top section: image + info side by side ── */
+  .cpg-top {
     display: flex;
-    gap: 20px;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-right: 20px;
   }
 
-  .popup-inner img {
-    width: 140px;
-    height: 160px;
+  .cpg-top img {
+    width: 120px;
+    height: 140px;
     object-fit: cover;
     flex-shrink: 0;
   }
 
-  .popup-details h3 {
+  .cpg-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .cpg-info h3 {
     font-size: 16px;
+    font-weight: 500;
+    font-style: italic;
+    margin: 0 0 8px 0;
+    color: #000;
+    font-family: Georgia, 'Times New Roman', serif;
+  }
+
+  .cpg-price {
+    font-size: 18px;
     font-weight: 700;
-    margin-bottom: 6px;
+    margin: 0 0 10px 0;
+    color: #000;
   }
 
-  .popup-details #popupPrice {
-    font-size: 15px;
-    margin-bottom: 8px;
-    color: #333;
-  }
-
-  .popup-details #popupDescription {
+  .cpg-desc {
     font-size: 12px;
-    color: #666;
-    line-height: 1.5;
-    margin-bottom: 12px;
+    color: #555;
+    line-height: 1.55;
+    margin: 0;
   }
 
-  /* Options */
-  #popupOptions {
-    margin-bottom: 16px;
+  /* ============================================================
+     COLOR SELECTOR — Figma design
+     Two side-by-side boxes with colored left border stripe.
+     Selected = black background + white text.
+     ============================================================ */
+  .cpg-opt-group {
+    margin-bottom: 20px;
   }
 
-  .option-group {
-    margin-bottom: 12px;
+  .cpg-opt-label {
+    font-size: 13px;
+    font-weight: 400;
+    color: #000;
+    margin: 0 0 8px 0;
   }
 
-  .option-label {
-    font-size: 12px;
-    font-weight: 600;
-    margin-bottom: 6px;
-    text-transform: uppercase;
-  }
-
-  .option-buttons {
+  .cpg-color-wrap {
     display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
+    border: 1px solid #000;
+    overflow: hidden;
   }
 
-  .option-btn {
-    padding: 6px 14px;
-    border: 1px solid #ccc;
+  .cpg-color-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
     background: #fff;
+    border: none;
+    border-right: 1px solid #ccc;
     cursor: pointer;
-    font-size: 12px;
-    transition: all 0.2s;
+    font-size: 14px;
+    font-weight: 400;
+    color: #000;
+    position: relative;
+    transition: background 0.2s ease, color 0.2s ease;
+    text-align: left;
+    min-height: 44px;
   }
 
-  .option-btn.active {
+  .cpg-color-btn:last-child {
+    border-right: none;
+  }
+
+  /* Colored stripe on the left edge of each color option */
+  .cpg-color-stripe {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 5px;
+    height: 100%;
+  }
+
+  .cpg-color-btn-text {
+    margin-left: 12px;
+  }
+
+  /* Selected color: black background, white text */
+  .cpg-color-btn.active {
     background: #000;
     color: #fff;
-    border-color: #000;
   }
 
-  .size-select {
+  /* ============================================================
+     SIZE DROPDOWN — Figma design
+     Custom dropdown with "Choose your size" + chevron.
+     Expands to show XS, S, M, L, XL options.
+     ============================================================ */
+  .cpg-size-dropdown {
+    position: relative;
+  }
+
+  .cpg-size-toggle {
     width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: #fff;
+    border: 1px solid #000;
     cursor: pointer;
+    font-size: 14px;
+    color: #000;
+    box-sizing: border-box;
   }
 
-  /* Add to Cart Button */
-  .add-to-cart-btn {
+  .cpg-size-toggle:hover {
+    background: #fafafa;
+  }
+
+  .cpg-chevron {
+    font-size: 14px;
+    transition: transform 0.25s ease;
+    user-select: none;
+  }
+
+  .cpg-size-toggle.open .cpg-chevron {
+    transform: rotate(180deg);
+  }
+
+  .cpg-size-list {
+    display: none;
+    border: 1px solid #000;
+    border-top: none;
+    background: #fff;
+    max-height: 220px;
+    overflow-y: auto;
+  }
+
+  .cpg-size-list.open {
+    display: block;
+  }
+
+  .cpg-size-option {
     width: 100%;
-    padding: 14px;
+    padding: 12px 16px;
+    background: #fff;
+    border: none;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    font-size: 14px;
+    text-align: center;
+    color: #000;
+    transition: background 0.15s ease;
+    box-sizing: border-box;
+  }
+
+  .cpg-size-option:last-child {
+    border-bottom: none;
+  }
+
+  .cpg-size-option:hover {
+    background: #f5f5f5;
+  }
+
+  .cpg-size-option.active {
+    background: #000;
+    color: #fff;
+  }
+
+  /* ============================================================
+     ADD TO CART BUTTON — Frontend only
+     ============================================================ */
+  .cpg-atc {
+    width: calc(100% + 56px);
+    margin-left: -28px;
+    margin-top: 24px;
+    padding: 18px 28px;
     background: #000;
     color: #fff;
     border: none;
@@ -227,19 +376,29 @@
     font-weight: 600;
     letter-spacing: 2px;
     cursor: pointer;
-    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 12px;
+    transition: background 0.3s ease;
   }
 
-  .add-to-cart-btn:hover {
-    background: #f0c040;
-    color: #000;
+  .cpg-atc:hover {
+    background: #333;
   }
 
-  /* Mobile */
+  .cpg-atc.added {
+    background: #2d7a3e;
+  }
+
+  .cpg-atc-arrow {
+    font-size: 18px;
+    font-weight: 300;
+  }
+
+  /* ============================================================
+     MOBILE RESPONSIVE
+     ============================================================ */
   @media (max-width: 768px) {
     .grid-container {
       grid-template-columns: repeat(2, 1fr);
@@ -249,114 +408,220 @@
       height: 200px;
     }
 
-    .popup-inner {
+    .custom-grid {
+      padding: 30px 16px;
+    }
+
+    .cpg-popup {
+      width: 95vw;
+      padding: 20px 20px 0 20px;
+    }
+
+    .cpg-top {
       flex-direction: column;
     }
 
-    .popup-inner img {
+    .cpg-top img {
       width: 100%;
       height: 200px;
     }
 
-    .custom-grid {
-      padding: 30px 16px;
+    .cpg-atc {
+      width: calc(100% + 40px);
+      margin-left: -20px;
     }
   }
 </style>
 
 <script>
-  // Store selected options and current product
-  let selectedOptions = {};
-  let currentVariants = [];
-  let currentProductId = null;
-  let currentOptionsConfig = [];
+  /* ============================================================
+     QUICK VIEW POPUP — JavaScript
+     ============================================================ */
+
+  // State
+  let cpgSelectedOptions = {};
+  let cpgCurrentProduct = null;
 
   /**
-   * Open popup with product data
+   * Color name → CSS hex mapping for the left stripe
    */
-  function openPopup(btn) {
-    // Get product data from button attributes
+  function cpgGetColorHex(name) {
+    const map = {
+      'blue': '#1a3a8a',
+      'black': '#000000',
+      'red': '#8b0023',
+      'grey': '#999999',
+      'gray': '#999999',
+      'white': '#cccccc',
+      'green': '#2d6b2d',
+      'brown': '#6b3a1e',
+      'navy': '#1a2744',
+      'beige': '#c8b89a',
+      'pink': '#d4668e',
+      'yellow': '#c4a800',
+      'orange': '#cc6600',
+      'purple': '#5c2d82',
+      'cream': '#d4c9a8',
+      'tan': '#c2a36e',
+      'maroon': '#5a0020',
+      'teal': '#1a6b6b',
+      'olive': '#556b2f',
+      'coral': '#cd5b45',
+    };
+    return map[name.toLowerCase().trim()] || '#333333';
+  }
+
+  /**
+   * Open the quick-view popup
+   */
+  function cpgOpenPopup(btn) {
     const title = btn.dataset.productTitle;
     const price = btn.dataset.productPrice;
     const description = btn.dataset.productDescription;
     const image = btn.dataset.productImage;
-    currentVariants = JSON.parse(btn.dataset.productVariants);
-    currentOptionsConfig = JSON.parse(btn.dataset.productOptions);
-    currentProductId = btn.dataset.productId;
-    selectedOptions = {};
+    const options = JSON.parse(btn.dataset.productOptions);
 
-    // Set popup content
-    document.getElementById('popupTitle').textContent = title;
-    document.getElementById('popupPrice').textContent = price;
-    document.getElementById('popupDescription').textContent = description;
-    document.getElementById('popupImage').src = image;
+    cpgCurrentProduct = { title, price, description, image, options };
+    cpgSelectedOptions = {};
 
-    // Build options
-    buildOptions(currentOptionsConfig);
+    // Populate popup content
+    document.getElementById('cpgTitle').textContent = title;
+    document.getElementById('cpgPrice').textContent = price;
+    document.getElementById('cpgDesc').textContent = description;
+    document.getElementById('cpgImage').src = image;
+
+    // Build color + size options
+    cpgBuildOptions(options);
+
+    // Reset Add to Cart button
+    const atcBtn = document.getElementById('cpgAtcBtn');
+    atcBtn.classList.remove('added');
+    atcBtn.disabled = false;
+    atcBtn.querySelector('.cpg-atc-text').textContent = 'ADD TO CART';
 
     // Show popup
-    document.getElementById('popupOverlay').style.display = 'block';
-    document.getElementById('popupBox').style.display = 'block';
+    document.getElementById('cpgOverlay').style.display = 'block';
+    document.getElementById('cpgPopup').style.display = 'block';
     document.body.style.overflow = 'hidden';
   }
 
   /**
-   * Build color and size options dynamically
+   * Build color and size option controls dynamically
    */
-  function buildOptions(options) {
-    const container = document.getElementById('popupOptions');
+  function cpgBuildOptions(options) {
+    const container = document.getElementById('cpgOptions');
     container.innerHTML = '';
 
-    options.forEach((option, index) => {
+    options.forEach(function(option) {
       const group = document.createElement('div');
-      group.className = 'option-group';
+      group.className = 'cpg-opt-group';
 
+      // Label (e.g., "Color" or "Size")
       const label = document.createElement('p');
-      label.className = 'option-label';
+      label.className = 'cpg-opt-label';
       label.textContent = option.name;
       group.appendChild(label);
 
       const isSize = option.name.toLowerCase().includes('size');
 
       if (isSize) {
-        // Size dropdown
-        const select = document.createElement('select');
-        select.className = 'size-select';
+        /* ─────────────────────────────────────────
+           CUSTOM SIZE DROPDOWN (Figma design)
+           ───────────────────────────────────────── */
+        const dropdown = document.createElement('div');
+        dropdown.className = 'cpg-size-dropdown';
 
-        option.values.forEach((val, i) => {
-          const opt = document.createElement('option');
-          opt.value = val;
+        // Toggle button
+        const toggle = document.createElement('button');
+        toggle.className = 'cpg-size-toggle';
+        toggle.type = 'button';
+        toggle.innerHTML = '<span class="cpg-size-text">Choose your size</span><span class="cpg-chevron">∨</span>';
+
+        // Dropdown list
+        const list = document.createElement('div');
+        list.className = 'cpg-size-list';
+
+        option.values.forEach(function(val) {
+          const opt = document.createElement('button');
+          opt.className = 'cpg-size-option';
+          opt.type = 'button';
           opt.textContent = val;
-          select.appendChild(opt);
-          if (i === 0) selectedOptions[option.name] = val; // Default to first
+
+          opt.onclick = function() {
+            // Deselect all, select this one
+            list.querySelectorAll('.cpg-size-option').forEach(function(o) {
+              o.classList.remove('active');
+            });
+            opt.classList.add('active');
+            cpgSelectedOptions[option.name] = val;
+
+            // Update toggle text and close dropdown
+            toggle.querySelector('.cpg-size-text').textContent = val;
+            list.classList.remove('open');
+            toggle.classList.remove('open');
+          };
+
+          list.appendChild(opt);
         });
 
-        select.addEventListener('change', function() {
-          selectedOptions[option.name] = this.value;
-        });
+        // Toggle open/close
+        toggle.onclick = function() {
+          const isOpen = list.classList.contains('open');
+          if (isOpen) {
+            list.classList.remove('open');
+            toggle.classList.remove('open');
+          } else {
+            list.classList.add('open');
+            toggle.classList.add('open');
+          }
+        };
 
-        group.appendChild(select);
+        dropdown.appendChild(toggle);
+        dropdown.appendChild(list);
+        group.appendChild(dropdown);
+
       } else {
-        // Color/Other buttons
-        const btnGroup = document.createElement('div');
-        btnGroup.className = 'option-buttons';
+        /* ─────────────────────────────────────────
+           COLOR SELECTOR (Figma design)
+           Two boxes with colored left stripe.
+           Selected = black bg + white text.
+           ───────────────────────────────────────── */
+        const wrap = document.createElement('div');
+        wrap.className = 'cpg-color-wrap';
 
-        option.values.forEach((val, i) => {
+        option.values.forEach(function(val, i) {
           const btn = document.createElement('button');
-          btn.className = 'option-btn' + (i === 0 ? ' active' : '');
-          btn.textContent = val;
-          
-          if (i === 0) selectedOptions[option.name] = val;
+          btn.className = 'cpg-color-btn' + (i === 0 ? ' active' : '');
+          btn.type = 'button';
+
+          // Colored stripe
+          const stripe = document.createElement('span');
+          stripe.className = 'cpg-color-stripe';
+          stripe.style.backgroundColor = cpgGetColorHex(val);
+
+          // Color name text
+          const text = document.createElement('span');
+          text.className = 'cpg-color-btn-text';
+          text.textContent = val;
+
+          btn.appendChild(stripe);
+          btn.appendChild(text);
+
+          // Default first option as selected
+          if (i === 0) cpgSelectedOptions[option.name] = val;
 
           btn.onclick = function() {
-            btnGroup.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active'));
+            wrap.querySelectorAll('.cpg-color-btn').forEach(function(b) {
+              b.classList.remove('active');
+            });
             btn.classList.add('active');
-            selectedOptions[option.name] = val;
+            cpgSelectedOptions[option.name] = val;
           };
-          btnGroup.appendChild(btn);
+
+          wrap.appendChild(btn);
         });
 
-        group.appendChild(btnGroup);
+        group.appendChild(wrap);
       }
 
       container.appendChild(group);
@@ -366,96 +631,78 @@
   /**
    * Close popup
    */
-  function closePopup() {
-    document.getElementById('popupOverlay').style.display = 'none';
-    document.getElementById('popupBox').style.display = 'none';
+  function cpgClosePopup() {
+    document.getElementById('cpgOverlay').style.display = 'none';
+    document.getElementById('cpgPopup').style.display = 'none';
     document.body.style.overflow = '';
+
+    // Close any open size dropdowns
+    document.querySelectorAll('.cpg-size-list.open').forEach(function(el) {
+      el.classList.remove('open');
+    });
+    document.querySelectorAll('.cpg-size-toggle.open').forEach(function(el) {
+      el.classList.remove('open');
+    });
   }
 
   /**
-   * Add to cart with variant matching
-   * Special rule: if Black + Medium selected, also add Soft Winter Jacket
+   * Add to Cart — Frontend only (visual confirmation)
+   * Per test requirements: just shows frontend feedback, no actual cart API call.
    */
-  function addToCart() {
-    // Find matching variant using option1, option2, option3
-    const matchedVariant = currentVariants.find(variant => {
-      let isMatch = true;
-      currentOptionsConfig.forEach((opt, index) => {
-        const optionKey = 'option' + (index + 1);
-        if (variant[optionKey] !== selectedOptions[opt.name]) {
-          isMatch = false;
-        }
-      });
-      return isMatch;
-    });
+  function cpgAddToCart() {
+    const btn = document.getElementById('cpgAtcBtn');
+    const textEl = btn.querySelector('.cpg-atc-text');
+    const arrowEl = btn.querySelector('.cpg-atc-arrow');
 
-    if (!matchedVariant) {
-      alert('This combination is currently unavailable.');
-      return;
-    }
-
-    const items = [{ id: matchedVariant.id, quantity: 1 }];
-
-    // Check special rule - Black + Medium = also add Soft Winter Jacket
-    let hasBlack = false;
-    let hasMedium = false;
-
-    Object.keys(selectedOptions).forEach(key => {
-      const val = selectedOptions[key].toLowerCase();
-      if (val === 'black') hasBlack = true;
-      if (val === 'm' || val === 'medium') hasMedium = true;
-    });
-
-    if (hasBlack && hasMedium) {
-      fetch('/products/soft-winter-jacket.js')
-        .then(r => r.json())
-        .then(product => {
-          if (product && product.variants && product.variants.length > 0) {
-             items.push({ 
-               id: product.variants[0].id, 
-               quantity: 1 
-             });
-          }
-          postToCart(items);
-        })
-        .catch(() => postToCart(items)); // Proceed anyway if jacket fetch fails
-    } else {
-      postToCart(items);
-    }
-  }
-
-  /**
-   * Post items to Shopify cart
-   */
-  function postToCart(items) {
-    const btn = document.querySelector('.add-to-cart-btn');
-    const originalText = btn.innerHTML;
-    btn.innerHTML = 'ADDING...';
+    // Show "Added" feedback
+    textEl.textContent = 'ADDED TO CART';
+    arrowEl.textContent = '✓';
+    btn.classList.add('added');
     btn.disabled = true;
 
-    fetch('/cart/add.js', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items })
-    })
-    .then(r => r.json())
-    .then(() => {
-      closePopup();
-      // Redirect to cart page to show added items
-      window.location.href = '/cart';
-    })
-    .catch(err => {
-      console.error('Cart error:', err);
-      alert('Something went wrong. Please try again.');
-      btn.innerHTML = originalText;
+    // Reset after 1.5s and close popup
+    setTimeout(function() {
+      textEl.textContent = 'ADD TO CART';
+      arrowEl.textContent = '→';
+      btn.classList.remove('added');
       btn.disabled = false;
-    });
+      cpgClosePopup();
+    }, 1500);
   }
+
+  /**
+   * Close dropdown when clicking outside
+   */
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.cpg-size-dropdown')) {
+      document.querySelectorAll('.cpg-size-list.open').forEach(function(el) {
+        el.classList.remove('open');
+      });
+      document.querySelectorAll('.cpg-size-toggle.open').forEach(function(el) {
+        el.classList.remove('open');
+      });
+    }
+  });
+
+  /**
+   * Close popup on Escape key
+   */
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') cpgClosePopup();
+  });
 </script>
 
 {% schema %}
 {
   "name": "Custom Product Grid",
+  "settings": [
+    {
+      "type": "text",
+      "id": "grid_title",
+      "label": "Section Title",
+      "default": "Tisso vison in the wild"
+    }
+  ],
   "blocks": [
     {
       "type": "product",
