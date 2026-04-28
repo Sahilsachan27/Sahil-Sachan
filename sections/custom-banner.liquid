@@ -209,8 +209,7 @@
     height: 100% !important;
     /* "cover" fills and crops edges — items bleed off naturally */
     object-fit: cover !important;
-    /* Shifted down to match Figma — items sit lower in the band */
-    object-position: center 40% !important;
+    object-position: center center !important;
     display: block !important;
     max-width: none !important;
     border: none !important;
@@ -242,8 +241,8 @@
     height: 100% !important;
     /* "cover" fills and crops — bottom items partially disappear */
     object-fit: cover !important;
-    /* Shifted right + lower to match Figma — clear left space for text */
-    object-position: 75% 60% !important;
+    /* Push image far right so left side is clean white for text */
+    object-position: 90% 55% !important;
     display: block !important;
     max-width: none !important;
     border: none !important;
@@ -262,10 +261,10 @@
     background: linear-gradient(
       to right,
       rgba(255,255,255,1.00) 0%,
-      rgba(255,255,255,1.00) 25%,
-      rgba(255,255,255,0.92) 38%,
-      rgba(255,255,255,0.65) 50%,
-      rgba(255,255,255,0.00) 65%
+      rgba(255,255,255,1.00) 38%,
+      rgba(255,255,255,0.85) 48%,
+      rgba(255,255,255,0.40) 58%,
+      rgba(255,255,255,0.00) 70%
     ) !important;
     z-index: 1 !important;
     pointer-events: none !important;
