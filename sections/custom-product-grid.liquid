@@ -588,6 +588,7 @@
     const options = JSON.parse(btn.dataset.productOptions);
 
     cpgCurrentProduct = { title, price, description, image, options };
+    cpgCurrentProduct.variantData = btn.dataset.productVariants;
     cpgSelectedOptions = {};
 
     // Populate popup content
@@ -753,28 +754,111 @@
   }
 
   /**
-   * Add to Cart — Frontend only (visual confirmation)
-   * Per test requirements: just shows frontend feedback, no actual cart API call.
+   * Add to Cart — Real Shopify Cart API
+   * 1. Finds matching variant from selected options
+   * 2. Adds to Shopify cart via /cart/add.js
+   * 3. If Black + Medium selected → also adds Soft Winter Jacket
    */
   function cpgAddToCart() {
     const btn = document.getElementById('cpgAtcBtn');
     const textEl = btn.querySelector('.cpg-atc-text');
     const arrowEl = btn.querySelector('.cpg-atc-arrow');
 
-    // Show "Added" feedback
-    textEl.textContent = 'ADDED TO CART';
-    arrowEl.textContent = '✓';
-    btn.classList.add('added');
-    btn.disabled = true;
+    // Get variants from the currently open product button
+    const activeBtn = document.querySelector('.grid-plus-btn[data-product-variants]');
+    const allBtns = document.querySelectorAll('.grid-plus-btn');
+    
+    // Find the button that opened this popup by matching title
+    let currentBtn = null;
+    allBtns.forEach(function(b) {
+      if (b.dataset.productTitle === cpgCurrentProduct.title) {
+        currentBtn = b;
+      }
+    });
 
-    // Reset after 1.5s and close popup
-    setTimeout(function() {
+    if (!currentBtn) {
+      alert('Something went wrong. Please try again.');
+      return;
+    }
+
+    // Parse variants from button data
+    const variants = JSON.parse(cpgCurrentProduct.variantData || '[]');
+
+    // Find matching variant based on selected options
+    const matchedVariant = variants.find(function(variant) {
+      return Object.keys(cpgSelectedOptions).every(function(optName) {
+        return variant.title.toLowerCase().includes(
+          cpgSelectedOptions[optName].toLowerCase()
+        );
+      });
+    });
+
+    if (!matchedVariant) {
+      alert('Please select all options before adding to cart!');
+      return;
+    }
+
+    // Disable button while processing
+    btn.disabled = true;
+    textEl.textContent = 'ADDING...';
+
+    // Build items array
+    const items = [{ id: matchedVariant.id, quantity: 1 }];
+
+    // Check special rule: Black + Medium → also add Soft Winter Jacket
+    const selectedColor = (cpgSelectedOptions['Color'] || '').toLowerCase();
+    const selectedSize = (cpgSelectedOptions['Size'] || '').toLowerCase();
+    const isBlack = selectedColor === 'black';
+    const isMedium = selectedSize === 'm' || selectedSize === 'medium';
+
+    if (isBlack && isMedium) {
+      // Fetch Soft Winter Jacket product then add both
+      fetch('/products/soft-winter-jacket.js')
+        .then(function(r) { return r.json(); })
+        .then(function(jacket) {
+          items.push({ id: jacket.variants[0].id, quantity: 1 });
+          cpgPostToCart(items, btn, textEl, arrowEl);
+        })
+        .catch(function() {
+          // If jacket not found just add main product
+          cpgPostToCart(items, btn, textEl, arrowEl);
+        });
+    } else {
+      cpgPostToCart(items, btn, textEl, arrowEl);
+    }
+  }
+
+  /**
+   * POST items to Shopify Cart API
+   */
+  function cpgPostToCart(items, btn, textEl, arrowEl) {
+    fetch('/cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: items })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.status && data.status !== 200) {
+        throw new Error(data.description || 'Cart error');
+      }
+      // Success feedback
+      textEl.textContent = 'ADDED TO CART';
+      arrowEl.textContent = '✓';
+      btn.classList.add('added');
+
+      // Redirect to cart after short delay
+      setTimeout(function() {
+        window.location.href = '/cart';
+      }, 800);
+    })
+    .catch(function(err) {
+      console.error('Cart error:', err);
       textEl.textContent = 'ADD TO CART';
       arrowEl.textContent = '→';
-      btn.classList.remove('added');
       btn.disabled = false;
-      cpgClosePopup();
-    }, 1500);
+      alert('Could not add to cart. Please try again.');
+    });
   }
 
   /**
